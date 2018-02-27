@@ -6,7 +6,6 @@ import store from "./store"
 Vue.config.productionTip = false
 
 fastclick.attach(document.body);//解决300毫秒延迟问题
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

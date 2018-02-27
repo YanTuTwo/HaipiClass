@@ -13,7 +13,7 @@
 				<div class="recommond-tit">
 				 	<p>精彩推荐</p>
 				</div>
-				<listview :data="listdata"  @select="selectItem"></listview>
+				<!-- <listview :data="listdata"  @select="selectItem"></listview> -->
 			</div>
 		</scroller>
 		</div>
@@ -21,18 +21,126 @@
 	<div class="backtotop" @click="backtotop" v-show="showbtn">
 		<span class="iconfont icon-jiantoushang"></span>
 	</div>	
-	<!-- <loading :show="loading" text="loading" ></loading> -->
+	<loading :show="loading" text="loading" ></loading>
 	</div>
 </template>
 <script>
 import Vue from 'vue'
 import Listview from '@/common/listview/listview'
-import { Swiper,Scroller} from 'vux'
-// Vue.use(ToastPlugin);
+import { Swiper,Scroller,ToastPlugin,Loading} from 'vux'
+Vue.use(ToastPlugin);
 import axios from 'axios'
 import {mapMutations,mapGetters} from "vuex"
 export default {
-  
+	components:{
+		Swiper,
+		Scroller,
+		Loading,
+		Listview
+	},
+	data(){
+		return {
+			swiperdata:[],
+			listdata:[],
+			index: 0,
+			scrolltop:'',
+			successdata: true,
+			showbtn:false,
+			loading:false
+		}
+	},
+	created(){					
+		this._getSwiperList();
+	},
+	mounted(){
+		this.initScroll();
+	},
+	methods:{
+		initScroll(){
+			let scrolltop=this.$refs.scrollerwrapper.offsetTop;
+			this.scrolltop=(document.documentElement.clientHeight-scrolltop)+'px';
+			console.log(this.scrolltop);
+		},
+		//下拉刷新重新获取数据
+		success(){
+			setTimeout(()=>{
+				this.swiperdata=[];
+				this.listdata=[];
+				this._getSwiperList();
+				this.$refs.scroller.reset({top:0})
+			},2000)
+		},
+		scrollbottom(){
+			this.$vux.toast.text('做人要有底线~~', 'bottom');
+		},
+		onscroll(position){
+			if(position!=null){
+				if(position.top>200){
+					this.showbtn=true;
+				}else{
+					this.showbtn=false
+				}
+			}			
+		},
+		onIndexChange (index) {
+		    this.index = index
+		},
+		selectItem(plid,contentid){
+			this.SET_PLID(plid);
+			this.SET_CONTENTID(contentid);
+			this.SET_FULL_SCREEN(true);
+		},
+		_getSwiperList(){
+			this.loading=true;
+		   	axios.get('http://39.108.233.223:8080/api/getList',{}).then((res)=>{
+				//数据处理成后5条做轮播图
+				this._dataprocessing(res.data);
+				this.loading=false;
+			})
+		},
+		backtotop(){
+			this.$refs.scroller.reset({top:0})
+		},
+		_dataprocessing(list){
+			for(var i=0;i<5;i++){
+				let swiperobj={};
+				swiperobj.plid=list[i].plid;
+	  			swiperobj.contentid=list[i].subscribeContentId;
+	   			swiperobj.img=list[i].image;
+		   		swiperobj.title=list[i].contentTitle;
+				this.swiperdata.push(swiperobj);
+			}
+		   	for(var j=5;j<list.length;j++){
+				let listviewobj={};
+	   			listviewobj.plid=list[j].plid;
+	   			listviewobj.contentid=list[j].subscribeContentId;
+		   		listviewobj.image=list[j].image;
+				listviewobj.contentTitle=list[j].contentTitle;
+	   			listviewobj.contentDesc=list[j].contentDesc;		   					listviewobj.publishTime=timeprocessing(list[j].publishTime);
+	   			listviewobj.viewCount=viewcountprocessing(list[j].viewCount);
+		   		listviewobj.quantity=list[j].quantity;
+		   		this.listdata.push(listviewobj);		   			
+			}		 
+		   	function timeprocessing(num){
+		   		let date=new Date(num);
+		   		let str="";
+		   		let year = date.getFullYear();
+		   		let month= date.getMonth();
+		   		let day = date.getDate();
+		   		str=year+'/'+month+"/"+day
+		   		return str
+		   	}
+			function viewcountprocessing(count){
+		   		let str;
+				if(count>10000){
+		   			str=parseInt(count/10000)+'.'+parseInt(count%10000/1000)+'万';
+		   		}else{
+		   			str=count;
+		  		}
+				return str
+			}
+		},
+	}
 }
 </script>
 <style lang="scss" scoped>
