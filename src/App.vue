@@ -1,10 +1,9 @@
 <template>
   <div id="app" style="height: 100%">
     <drawer :show.sync="showUserMode" :show-mode="showModeValue" :drawer-style="{'background-color':'#fff', width: '200px'}">
-		<div slot="drawer">hahahah</div>
+		<div slot="drawer">个人中心</div>
 		<div slot="default">
-			<m-header @showUser="showUser"></m-header>
-			<router-view></router-view>
+			<router-view @showUserModal="showUser"></router-view>
 		</div>      
     </drawer>  
   </div>
@@ -12,6 +11,7 @@
 
 <script>
 import {Popup, Drawer } from "vux";
+import {mapMutations} from "vuex"
 import MHeader from "@/components/m-header/m-header"
 export default {
 	name: "App",
@@ -22,19 +22,29 @@ export default {
   	},
   	data() {
     	return {
-   			showUserMode: false,
+			showUserMode:false,
       		showModeValue: "push"
     	};
-  	},
+	},
+	computed:{
+
+	},
 	methods:{
 		showUser(){
 			this.showUserMode=!this.showUserMode;
-		}
+		},
+		...mapMutations([
+			'SET_SHOWUSER'
+		])
+	},
+	watch:{
+		
 	}
 };
 </script>
 
-<style>
+<style lang="less">
+// @import '~vux/src/styles/reset.less';
 @import "./assets/styles/common.css";
 body {
   	background-color: #fbf9fe;

@@ -1,0 +1,3 @@
+export const SET_SHOWUSER="SET_SHOWUSER";
+
+export const SET_NAVINDEX="SET_NAVINDEX";

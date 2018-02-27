@@ -13,9 +13,7 @@ export default {
 		XHeader
 	},
 	methods:{
-		showUser(){
-			this.$emit('showUser');
-		}
+
 	}
 }
 </script>
