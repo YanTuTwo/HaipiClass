@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import index from '@/components/index/index'
+import Index from '@/components/index/index'
 import Recommend from "@/components/recommend/recommend"
 import Ted from "@/components/ted/ted"
 import Internationalschool from "@/components/internationalschool/internationalschool"
+import PlayDetail from "@/components/playDetail/playDetail"
 Vue.use(Router)
 
 export default new Router({
@@ -15,12 +16,17 @@ export default new Router({
     {
       path:'/index/recommend',
       name:'index',
-      component: index,
+      component: Index,
       children:[
         { path: '/index/recommend', component:Recommend},
         { path: '/index/ted', component:Ted},
         { path: '/index/internationalschool', component: Internationalschool}
       ]
+    },
+    {
+      path:'/playDetail',
+      name:'playDetail',
+      component:PlayDetail
     }
   ]
 })

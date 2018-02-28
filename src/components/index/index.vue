@@ -4,7 +4,7 @@
 			<span slot="overwrite-left">
 				<x-icon type="navicon" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px" @click="showUser"></x-icon>				
 			</span>
-			<div class="logo"><img src="../../assets/logo.png" alt=""></div>
+			<div class="logo"><img src="../../assets/image/logo.png" alt=""></div>
 		</x-header>
 		<navigation></navigation>
 		<router-view></router-view>

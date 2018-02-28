@@ -13,13 +13,13 @@
 				<div class="recommond-tit">
 				 	<p>精彩推荐</p>
 				</div>
-				<!-- <listview :data="listdata"  @select="selectItem"></listview> -->
+				<listview :data="listdata"  @select="selectItem"></listview>
 			</div>
 		</scroller>
 		</div>
 	</transition>
 	<div class="backtotop" @click="backtotop" v-show="showbtn">
-		<span class="iconfont icon-jiantoushang"></span>
+		<x-icon type="ios-arrow-up" size="40" class="backtop-icon"></x-icon>
 	</div>	
 	<loading :show="loading" text="loading" ></loading>
 	</div>
@@ -83,12 +83,18 @@ export default {
 			}			
 		},
 		onIndexChange (index) {
-		    this.index = index
+		    this.index = index;
+		},
+		onClickPlay(){
+			let plid=this.swiperdata[this.index].plid;
+			let contentid=this.swiperdata[this.index].contentid;
+			this.goPlayDetail(plid,contentid);
+		},
+		goPlayDetail(plid,contentid){
+			this.$router.push({ path: '/playDetail', query: { plid: plid,contentid:contentid,start:'0',len:'5' }})
 		},
 		selectItem(plid,contentid){
-			this.SET_PLID(plid);
-			this.SET_CONTENTID(contentid);
-			this.SET_FULL_SCREEN(true);
+			this.goPlayDetail(plid,contentid);
 		},
 		_getSwiperList(){
 			this.loading=true;
@@ -116,7 +122,8 @@ export default {
 	   			listviewobj.contentid=list[j].subscribeContentId;
 		   		listviewobj.image=list[j].image;
 				listviewobj.contentTitle=list[j].contentTitle;
-	   			listviewobj.contentDesc=list[j].contentDesc;		   					listviewobj.publishTime=timeprocessing(list[j].publishTime);
+				listviewobj.contentDesc=list[j].contentDesc;		   					
+				listviewobj.publishTime=timeprocessing(list[j].publishTime);
 	   			listviewobj.viewCount=viewcountprocessing(list[j].viewCount);
 		   		listviewobj.quantity=list[j].quantity;
 		   		this.listdata.push(listviewobj);		   			
@@ -143,8 +150,44 @@ export default {
 	}
 }
 </script>
-<style lang="scss" scoped>
-.recommend{
-	background: #f1f1f1;
+<style lang="scss">
+.recommend .vux-slider > .vux-swiper > .vux-swiper-item > a > .vux-img{
+  background-position: top center;
 }
+.recommond-tit {
+  text-align: center;
+  padding-top: 1rem;
+  p {
+    font-size: 1.2rem;
+    color: #333333;
+  }
+}
+.xs-plugin-pulldown-container {
+  color: #fff;
+  background: #1991ec;
+  & > div {
+    width: 40px;
+    height: 30px;
+    margin: 10px auto;
+    background: url("http://yantutu.xin:8080/static/img/pulldownloading.a61850f.gif") no-repeat;
+    background-size: 40px 30px;
+  }
+}
+.backtotop {
+  position: fixed;
+  bottom: 3rem;
+  right: 2rem;
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  background: rgba(0,0,0,.4);
+  border-radius: 50%;  
+}
+.vux-x-icon {
+  fill: white;
+}
+.vux-slider > .vux-swiper > .vux-swiper-item > a > .vux-swiper-desc{
+	height: auto !important;
+}
+
 </style>
