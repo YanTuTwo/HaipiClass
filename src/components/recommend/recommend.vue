@@ -91,7 +91,7 @@ export default {
 			this.goPlayDetail(plid,contentid);
 		},
 		goPlayDetail(plid,contentid){
-			this.$router.push({ path: '/playDetail', query: { plid: plid,contentid:contentid,start:'0',len:'5' }})
+			this.$router.push({ path: '/playDetail', query: { plid: plid,contentid:contentid}})
 		},
 		selectItem(plid,contentid){
 			this.goPlayDetail(plid,contentid);

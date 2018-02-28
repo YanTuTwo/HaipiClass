@@ -47,7 +47,7 @@ export default {
 			loading:true,
 			hotlistflag:'three',
 			recommenstart:0,
-			recommenlen:3,
+			recommenlen:5,
 			showMenus:false,
 			menus:{
 				menu1: '分享到朋友圈',
@@ -66,20 +66,44 @@ export default {
     },
     mounted(){
         console.log(this.$route.query);
-        this._getmoviedata();	
-		this._gethotlist();
+		this.initDetail();
     },
     methods:{
+		initDetail(){
+			this.plid=this.$route.query.plid;
+			this.contentid=this.$route.query.contentid;
+			this._getmoviedata();	
+			this._gethotlist();
+		},
         _getmoviedata(){
-
+			axios.get('http://39.108.233.223:8080/api/getMovieList?plid='+this.plid+'&start='+this.recommenstart+'&len='+this.recommenlen).then((res)=>{
+				this.moviedata=res.data[0];
+				this.recommendList=	res.data[1];
+				this.loading=false;
+			})
         },
         _gethotlist(){
 
         },
         pullup(){
 
-        }
+        },
+		onCollect(){
+
+		},
+		lookmore(){
+
+		},
+		selectItem(plid,contentid){
+			this.$router.push({ path: '/playDetail', query: { plid: plid,contentid:contentid}})
+		}
+    },
+	watch: {
+		'$route' (to, from) {
+		this.initDetail();
+		this.$refs.scroller.reset({top:0})
     }
+}
 }
 </script>
 <style lang="scss" scoped>

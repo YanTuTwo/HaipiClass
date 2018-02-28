@@ -37,8 +37,8 @@
 		methods:{
 			selectItem(index){
 				let plid=this.data[index].plid;
-				let content=this.data[index].contentid;
-				this.$emit('select',plid,content);
+				let contentid=this.data[index].contentid;
+				this.$emit('select',plid,contentid);
 			}
 		}
 	}
