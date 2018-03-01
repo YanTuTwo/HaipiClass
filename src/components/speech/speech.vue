@@ -19,7 +19,7 @@ import axios from 'axios'
 export default {
     data(){
 		return {
-			id: 4,
+			id: 5,
 			type: 5,
 			cursor: 0,
 			pagesize: 10,

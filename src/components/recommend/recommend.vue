@@ -19,7 +19,7 @@
 		</div>
 	</transition>
 	<div class="backtotop" @click="backtotop" v-show="showbtn">
-		<x-icon type="ios-arrow-up" size="40" class="backtop-icon"></x-icon>
+		<span class="iconfont icon-jiantoushang"></span>
 	</div>	
 	<loading :show="loading" text="loading" ></loading>
 	</div>
@@ -150,27 +150,14 @@ export default {
 	}
 }
 </script>
-<style lang="scss">
-.recommend .vux-slider > .vux-swiper > .vux-swiper-item > a > .vux-img{
-  background-position: top center;
-}
+<style lang="scss" scoped>
 .recommond-tit {
   text-align: center;
   padding-top: 1rem;
   p {
     font-size: 1.2rem;
     color: #333333;
-  }
-}
-.xs-plugin-pulldown-container {
-  color: #fff;
-  background: #1991ec;
-  & > div {
-    width: 40px;
-    height: 30px;
-    margin: 10px auto;
-    background: url("http://yantutu.xin:8080/static/img/pulldownloading.a61850f.gif") no-repeat;
-    background-size: 40px 30px;
+	text-shadow:#f3f3f3 1px 1px 0px, #b2b2b2 1px 2px 0
   }
 }
 .backtotop {
@@ -182,12 +169,10 @@ export default {
   text-align: center;
   background: rgba(0,0,0,.4);
   border-radius: 50%;  
+  span {
+	  	color: #fff;
+		font-size: 2rem;
+		line-height: 3rem; 
+  }
 }
-.vux-x-icon {
-  fill: white;
-}
-.vux-slider > .vux-swiper > .vux-swiper-item > a > .vux-swiper-desc{
-	height: auto !important;
-}
-
 </style>

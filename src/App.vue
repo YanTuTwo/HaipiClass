@@ -45,12 +45,35 @@ export default {
 
 <style>
 @import "./assets/styles/common.css";
+@import url("//at.alicdn.com/t/font_487716_eku1dg3sxik0ggb9.css");
 body {
   	background-color: #fbf9fe;
 }
 html,body {
   	height: 100%;
   	width: 100%;
- 	overflow-x: hidden;
+ 		overflow-x: hidden;
+}
+.xs-plugin-pulldown-container{
+  color: #fff;
+  background: #1991ec;
+}
+.xs-plugin-pullup-container {
+	color: #999;
+  background: #fff;
+	line-height: 30px;
+}
+.xs-plugin-pulldown-container>div{
+		width: 40px;
+    height: 30px;		
+    margin: 10px auto;
+    background: url("http://yantutu.xin:8080/static/img/pulldownloading.a61850f.gif") no-repeat;
+    background-size: 40px 30px;
+}
+.vux-slider > .vux-swiper > .vux-swiper-item > a > .vux-swiper-desc{
+	height: auto !important;
+}
+.recommend .vux-slider > .vux-swiper > .vux-swiper-item > a > .vux-img{
+  background-position: top center;
 }
 </style>

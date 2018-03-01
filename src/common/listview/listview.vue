@@ -92,7 +92,7 @@
   font-size: 1.2rem;
 }
 .article_desc {
-  height: 3rem;
+  // height: 3rem;
   line-height: 1rem;
   width: 21.133rem;
   display: -webkit-box;

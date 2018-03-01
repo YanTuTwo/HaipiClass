@@ -3,7 +3,7 @@
 	<scroller lock-y :scrollbar-x=false ref="scroller">
 		<div class="tab">
 			<tab :line-width=2 v-model="index" defaultColor='#666' active-color='dodgerblue'>	      	        
-	        	<tab-item class="vux-center" :selected="demo2 === item" v-for="(item, index) in navlist" @click="demo2 = item" :key='index' @on-item-click="onItemClick"  ref="tab_item" >
+	        	<tab-item class="vux-center" :selected="currentname === item.name" v-for="(item, index) in navlist"  @on-item-click="onItemClick" :key="index"  ref="tab_item" >
 	        		<router-link class="tab-item" :to="item.router">{{item.name}}</router-link>
 	        	</tab-item>	        	
 	      </tab>
@@ -27,13 +27,13 @@
 						name:'TED',
 						router:'/index/ted'					
 					},{
-						name:'国际名校',
-						router:'/index/internationalschool'					
+						name:'演讲',
+						router:'/index/speech'					
 					},{
 						name:'国内名校',
 						router:'/index/domesticschool'					
 					},{
-						name:'演讲',
+						name:'国外',
 						router:'/index/speech'					
 					},{
 						name:'趣味课堂',
@@ -41,7 +41,15 @@
 					}
 				],
 				index: 0,
-				demo2: '推荐'
+				currentname:'推荐',
+			}
+		},
+		mounted(){
+			//根据路由地址判断当前的tabitem是哪个
+			for(var i=0;i<this.navlist.length;i++){
+				if(this.navlist[i].router==this.$route.fullPath){
+					this.currentname=this.navlist[i].name;
+				}
 			}
 		},
 		computed:{
@@ -53,12 +61,12 @@
 			TabItem
 		},
 		methods:{
-			onItemClick(){
-				this.SET_NAVINDEX(this.index);
-				console.log(typeof this.navindex);
+			onItemClick(index){
+				console.log(index);
+				this.SET_NAVINDEX(index);
 				let obj=document.querySelectorAll('.vux-tab-item');
-				if(this.index>0&&this.index<obj.length-2){
-					let left=(this.index-1)*obj[this.index].offsetWidth;
+				if(index>0&&index<obj.length-2){
+					let left=(index-1)*obj[index].offsetWidth;
 					this.$nextTick(() => {
 				      	this.$refs.scroller.reset({left: left})
 				   })
@@ -68,6 +76,7 @@
 				'SET_NAVINDEX'
 			])
 		}
+
 	}
 </script>
 
