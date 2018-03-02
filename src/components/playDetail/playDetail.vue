@@ -5,7 +5,7 @@
 		:pullupConfig="{ loadingContent: '<load-more></load-more>',upContent: '加载中...',height:50,content: '上拉加载更多',downContent: '释放加载更多',}">
 			<div class="scrollerwrapper">
 				<div class="videowrapper">
-					<video width="100%" controls="true" :src="moviedata.mp4url" :poster="moviedata.imgPath" ref='video' ></video>
+					<video width="100%" controls="true" :src="videolist.mp4url" :poster="videolist.imgPath" ref='video' ></video>
 				</div>
 				<p class="viewcount">播放：{{moviedata.hits}}次
 					<span class="iconfont icon-fenxiang text-nor"></span>
@@ -58,6 +58,7 @@ export default {
             moviedata:[],
 			recommendList:[],
 			hotlist:[],
+			videolist:[],
 			loading:false,
 			hotlistflag:'three',
 			recommenstart:0,
@@ -89,17 +90,19 @@ export default {
 			this.plid=this.$route.query.plid;
 			this.contentid=this.$route.query.contentid;
 			this._getmoviedata();	
-			this._gethotlist();
+			// this._gethotlist();
 		},
         _getmoviedata(){
-			axios.get('http://39.108.233.223:8080/api/getMovieList?plid='+this.plid+'&start='+this.recommenstart+'&len='+this.recommenlen).then((res)=>{
-				this.moviedata=res.data[0];
-				this.recommendList=	res.data[1];
+			axios.get('/api/playDetail/getMovieList?plid='+this.plid+'&start='+this.recommenstart+'&len='+this.recommenlen).then((res)=>{
+				console.log(res.data);
+				this.moviedata=res.data;
+				this.recommendList=	res.data.recommendList;
+				this.videolist=res.data.videoList[0];
 				this.loading=false;
 			})
         },
 		_getmorerecList(){
-			axios.get('http://39.108.233.223:8080/api/getMoreList?plid='+this.plid+'&start='+this.recommenstart+'&len='+this.recommenlen).then((res)=>{
+			axios.get('/api/playDetail/getMoreList?plid='+this.plid+'&start='+this.recommenstart+'&len='+this.recommenlen).then((res)=>{
 				this.recommendList=	this.recommendList.concat(res.data);		
 				this.loading=false;
 			})

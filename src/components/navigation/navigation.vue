@@ -27,13 +27,13 @@
 						name:'TED',
 						router:'/index/ted'					
 					},{
-						name:'演讲',
-						router:'/index/speech'					
+						name:'国外名校',
+						router:'/index/internationalschool/internationalschool'					
 					},{
 						name:'国内名校',
 						router:'/index/domesticschool'					
 					},{
-						name:'国外',
+						name:'演讲',
 						router:'/index/speech'					
 					},{
 						name:'趣味课堂',
@@ -49,6 +49,7 @@
 			for(var i=0;i<this.navlist.length;i++){
 				if(this.navlist[i].router==this.$route.fullPath){
 					this.currentname=this.navlist[i].name;
+					this.onItemClick(i);
 				}
 			}
 		},

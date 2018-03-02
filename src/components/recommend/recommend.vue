@@ -98,7 +98,7 @@ export default {
 		},
 		_getSwiperList(){
 			this.loading=true;
-		   	axios.get('http://39.108.233.223:8080/api/getList',{}).then((res)=>{
+		   	axios.get('/api/getList',{}).then((res)=>{
 				//数据处理成后5条做轮播图
 				this._dataprocessing(res.data);
 				this.loading=false;

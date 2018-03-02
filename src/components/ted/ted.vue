@@ -43,7 +43,7 @@ export default {
 	},
     methods:{
         _getclasslist(){
-            axios.get('http://39.108.233.223:8080/api/getclasslist', {
+            axios.get('/api/getclasslist', {
 				params: {
 					id: this.id,
 					type: this.type,
