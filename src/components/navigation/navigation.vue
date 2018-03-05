@@ -28,7 +28,7 @@
 						router:'/index/ted'					
 					},{
 						name:'国外名校',
-						router:'/index/internationalschool/internationalschool'					
+						router:'/index/internationalschool'					
 					},{
 						name:'国内名校',
 						router:'/index/domesticschool'					

@@ -18,8 +18,8 @@
 					<p class="movie-con"><span>类型：</span>{{moviedata.type}}</p>
 					<p class="movie-con moviedescription"><span>课程简介：</span>{{moviedata.description}}</p>
 				</div>
-				<h3 class="hotcomments-tit">网易热门评论</h3>
-				<div class="hotcomments">							
+				<h3 class="hotcomments-tit">{{isVideoCollection?'课程目录':'网易热门评论'}}</h3>
+				<div class="hotcomments" v-if="!isVideoCollection">							
 					<ul>
 						<li v-for="item in hotlist">
 							<div class="user">{{item.siteName+item.location}}网友  {{item.nickname}}<span>{{item.createTime}}</span></div>
@@ -31,11 +31,28 @@
 					</ul>
 					<div class="morebtn" @click="lookmore" v-show="hotlistflag=='three'&&!isEmptyhotlist&&hotlist.length==3"><span class="iconfont icon-jiantouxia"></span></div>
 				</div>
+				<div class="videoBox" v-if="isVideoCollection">
+					<div class="CollectionItem" v-for="(item,index) in VideoCollection.slice(0,3)">
+						
+					</div>
+					<x-button  @click.native="onLookAll" plain type="primary" class="custom-primary-blue">查看全部课程</x-button>	
+				</div>
 				<h3 class="aboutrecommend">相关推荐</h3>
-				<!-- <load-more :show-loading="false" :tip="('相关推荐')" background-color="#000"></load-more> -->
 				<listview :data="recommendList"  @select="selectItem"></listview>
 			</div>		
-		</scroller>  
+		</scroller> 
+		<popup v-model="showHideOnBlur" position="bottom" max-height="70%">	
+			<div class="popup-wrap">
+				<checker v-model="VideoIndex" radio-required default-item-class="demo2-item" selected-item-class="demo2-item-selected">
+					<checker-item :value="index" v-for="(item,index) in VideoCollection">
+						<div class="CollectionItem">{{index}}</div>
+					</checker-item>
+				</checker>
+			</div>				
+			<div style="padding: 15px;">
+				<x-button @click.native="showHideOnBlur = false" plain type="primary"  class="custom-primary-blue"> Close Me </x-button>
+			</div>
+		</popup> 
 		<div class="backtotop" @click="backtotop" v-show="showbtn">
 			<span class="iconfont icon-jiantoushang"></span>
 		</div>
@@ -47,7 +64,7 @@
 </template>
 <script>
 import Vue from 'vue'
-import { XHeader,Scroller,Loading,Actionsheet,ToastPlugin,LoadMore } from 'vux'
+import { XHeader,Scroller,Loading,Actionsheet,ToastPlugin,LoadMore,Checker,CheckerItem,XButton,Popup} from 'vux'
 Vue.use(ToastPlugin);
 import {mapGetters,mapMutations} from "vuex"
 import listview from '@/common//listview/listview'
@@ -63,13 +80,13 @@ export default {
 			hotlistflag:'three',
 			recommenstart:0,
 			recommenlen:5,
-			menus:{
-				menu1: '分享到朋友圈',
-        		menu2: '分享到QQ'
-			},
 			collected:true,
 			showbtn:false,
 			isEmptyhotlist:false,
+			isVideoCollection:true,//是否为合集
+			VideoCollection:[],//合集
+			VideoIndex:0,
+			showHideOnBlur:false,
         }
     },
     components:{
@@ -78,7 +95,11 @@ export default {
 		Loading,
 		listview,
 		Actionsheet,
-		LoadMore
+		LoadMore,
+		Checker,
+		CheckerItem,
+		XButton,
+		Popup
     },
     mounted(){
         console.log(this.$route.query);
@@ -90,16 +111,23 @@ export default {
 			this.loading=true;
 			this.plid=this.$route.query.plid;
 			this.contentid=this.$route.query.contentid;
-			this._getmoviedata();	
-			// this._gethotlist();
+			this._getmoviedata();				
 		},
 		//获取当前id的视频信息
         _getmoviedata(){
 			axios.get('/api/playDetail/getMovieList?plid='+this.plid+'&start='+this.recommenstart+'&len='+this.recommenlen).then((res)=>{
 				console.log(res.data);
 				this.moviedata=res.data;
-				this.recommendList=	res.data.recommendList;
-				this.videolist=res.data.videoList[0];
+				this.recommendList=	res.data.recommendList;				
+				//判断是否为合集
+				if(res.data.videoList.length>1){
+					this.isVideoCollection=true;
+					this.VideoCollection=res.data.videoList;
+					this.videolist=this.VideoCollection[0];
+				}else{
+					this.videolist=res.data.videoList[0];
+					this._gethotlist();
+				}
 				this.loading=false;
 			})
         },
@@ -120,7 +148,7 @@ export default {
 			})
 		},
         _gethotlist(){
-			axios.get('http://39.108.233.223:8080/api/getcomments?contentid='+this.contentid+'&flag='+this.hotlistflag).then((res)=>{
+			axios.get('/api/playDetail/getcomments?contentid='+this.contentid+'&flag='+this.hotlistflag).then((res)=>{
 		   		if(this.hotlistfla=='all'){
 		   			this.hotlist=res.data;
 		   		}
@@ -165,6 +193,10 @@ export default {
 				}
 			}			
 		},
+		onLookAll(){
+			console.log("1");
+			this.showHideOnBlur=true;
+		}
     },
 	watch: {
 		'$route' (to, from) {
@@ -312,6 +344,43 @@ export default {
 			color: #fff;
 			font-size: 2rem;
 			line-height: 3rem; 
+		}
+	}
+	.videoBox{
+		padding: 0 2rem;
+		
+		.CollectionItem{
+
+		}
+	}
+	.popup-wrap{
+		padding: 1rem;
+		height: 25rem;
+		overflow-y: auto;
+		.demo2-item {
+			width: 100%;
+			height: 3rem;
+			border: 1px solid #ccc;
+			display: inline-block;
+			border-radius: 5px;
+			line-height: 3rem;
+			text-align: center;
+			margin: 5px 0; 
+		}
+		.demo2-item-selected {
+			border-color: #1991EC;
+			background: #1991EC;
+			color: white;
+		}
+	}
+	.custom-primary-blue {
+		border-radius: 99px!important;
+		border-color: #1991EC!important;
+		color: #1991EC!important;
+		&:active {
+			border-color:#1991EC!important;
+			color: #fff!important;
+			background-color: #1991EC !important;
 		}
 	}
 	

@@ -5,6 +5,7 @@ import Recommend from "@/components/recommend/recommend"
 import Ted from "@/components/ted/ted"
 import Speech from "@/components/speech/speech"
 import PlayDetail from "@/components/playDetail/playDetail"
+import Internationalschool from "@/components/internationalschool/internationalschool"
 Vue.use(Router)
 
 export default new Router({
@@ -20,7 +21,8 @@ export default new Router({
       children:[
         { path: '/index/recommend', component:Recommend},
         { path: '/index/ted', component:Ted},
-        { path: '/index/speech', component: Speech}
+        { path: '/index/speech', component: Speech},
+        { path: '/index/internationalschool' ,component : Internationalschool}
       ]
     },
     {
