@@ -123,29 +123,11 @@ export default {
 		   		listviewobj.image=list[j].image;
 				listviewobj.contentTitle=list[j].contentTitle;
 				listviewobj.contentDesc=list[j].contentDesc;		   					
-				listviewobj.publishTime=timeprocessing(list[j].publishTime);
-	   			listviewobj.viewCount=viewcountprocessing(list[j].viewCount);
+				listviewobj.publishTime=list[j].publishTime;
+	   			listviewobj.viewCount=list[j].viewCount;
 		   		listviewobj.quantity=list[j].quantity;
 		   		this.listdata.push(listviewobj);		   			
 			}		 
-		   	function timeprocessing(num){
-		   		let date=new Date(num);
-		   		let str="";
-		   		let year = date.getFullYear();
-		   		let month= date.getMonth();
-		   		let day = date.getDate();
-		   		str=year+'/'+month+"/"+day
-		   		return str
-		   	}
-			function viewcountprocessing(count){
-		   		let str;
-				if(count>10000){
-		   			str=parseInt(count/10000)+'.'+parseInt(count%10000/1000)+'万';
-		   		}else{
-		   			str=count;
-		  		}
-				return str
-			}
 		},
 	}
 }

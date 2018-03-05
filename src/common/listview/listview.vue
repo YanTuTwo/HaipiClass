@@ -7,11 +7,11 @@
 				<span class="article_length_value">{{item.quantity}}</span></div>
 			</div>
 			<div class="article_info">
-			 	<div class="article_time">{{item.publishTime}}</div>
+			 	<div class="article_time">{{item.publishTime | ConvertTime}}</div>
 			 	<div class="article_title">{{item.contentTitle}}</div>
 			 	<div class="article_desc">{{item.contentDesc}}</div>
 			 	<div class="article_bottom">
-			 		<p>{{item.viewCount}}人观看</p>
+			 		<p>{{item.viewCount | ConvertPeople}}人观看</p>
 			 		<span class="share"></span>
 				</div>
 			</div>

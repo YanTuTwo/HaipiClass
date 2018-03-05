@@ -7,7 +7,7 @@
 				<div class="videowrapper">
 					<video width="100%" controls="true" :src="videolist.mp4url" :poster="videolist.imgPath" ref='video' ></video>
 				</div>
-				<p class="viewcount">播放：{{moviedata.hits}}次
+				<p class="viewcount">播放：{{moviedata.hits | ConvertPeople}}次
 					<span class="iconfont icon-fenxiang text-nor"></span>
 					<span @click="onCollect" ref="collectbtn" :class="{collectedbtn: collected}" class="iconfont icon-star-copy"></span>					
 				</p>
@@ -85,6 +85,7 @@ export default {
 		this.initDetail();
     },
     methods:{
+		//初始化数据，获取路由传来的参数
 		initDetail(){
 			this.loading=true;
 			this.plid=this.$route.query.plid;
@@ -92,6 +93,7 @@ export default {
 			this._getmoviedata();	
 			// this._gethotlist();
 		},
+		//获取当前id的视频信息
         _getmoviedata(){
 			axios.get('/api/playDetail/getMovieList?plid='+this.plid+'&start='+this.recommenstart+'&len='+this.recommenlen).then((res)=>{
 				console.log(res.data);
@@ -103,8 +105,18 @@ export default {
         },
 		_getmorerecList(){
 			axios.get('/api/playDetail/getMoreList?plid='+this.plid+'&start='+this.recommenstart+'&len='+this.recommenlen).then((res)=>{
+				console.log(res.data);
+				if(res.data==""){
+					this.$vux.toast.text('没有更多数据了~·', 'bottom');
+					this.$refs.scroller.reset();
+					this.$refs.scroller.disablePullup();
+					this.loading=false;
+					return false;
+				}
 				this.recommendList=	this.recommendList.concat(res.data);		
 				this.loading=false;
+				this.$refs.scroller.reset();
+				this.$refs.scroller.donePullup();
 			})
 		},
         _gethotlist(){
@@ -122,18 +134,8 @@ export default {
         },
         pullup(){
 			this.recommenstart=this.recommenlen+this.recommenstart;
-			if(this.recommenstart>=30){
-				this.$vux.toast.text('没有更多数据了~·', 'bottom');
-				this.$refs.scroller.reset();
-				this.$refs.scroller.disablePullup();
-				return false;
-			}
 			this.loading=true;
-		    this._getmorerecList();	
-		    this.$nextTick(() => {
-				this.$refs.scroller.reset();
-				this.$refs.scroller.donePullup();
-			})
+		    this._getmorerecList();			    
         },
 		onCollect(){
 			
