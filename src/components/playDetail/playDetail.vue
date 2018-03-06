@@ -5,7 +5,7 @@
 		:pullupConfig="{ loadingContent: '<load-more></load-more>',upContent: '加载中...',height:50,content: '上拉加载更多',downContent: '释放加载更多',}">
 			<div class="scrollerwrapper">
 				<div class="videowrapper">
-					<video width="100%" controls="true" :src="videolist.mp4url" :poster="videolist.imgPath" ref='video' ></video>
+					<video width="100%" controls="true" :src="videolist.mp4SdUrl" :poster="videolist.imgPath" ref='video' ></video>
 				</div>
 				<p class="viewcount">播放：{{moviedata.hits | ConvertPeople}}次
 					<span class="iconfont icon-fenxiang text-nor"></span>
@@ -32,10 +32,10 @@
 					<div class="morebtn" @click="lookmore" v-show="hotlistflag=='three'&&!isEmptyhotlist&&hotlist.length==3"><span class="iconfont icon-jiantouxia"></span></div>
 				</div>
 				<div class="videoBox" v-if="isVideoCollection">
-					<div class="CollectionItem" v-for="(item,index) in VideoCollection.slice(0,3)">
-						
+					<div v-for="(item,index) in currentVideoList">
+						<div class="CollectionItem" @click="selectItem(item.plid,item.mid)" >第{{item.pNumber}}集{{item.title}}</div>
 					</div>
-					<x-button  @click.native="onLookAll" plain type="primary" class="custom-primary-blue">查看全部课程</x-button>	
+					<x-button  @click.native="onLookAll" plain type="primary" class="custom-primary-blue" v-if="VideoCollection.length>3">查看全部课程</x-button>	
 				</div>
 				<h3 class="aboutrecommend">相关推荐</h3>
 				<listview :data="recommendList"  @select="selectItem"></listview>
@@ -44,8 +44,8 @@
 		<popup v-model="showHideOnBlur" position="bottom" max-height="70%">	
 			<div class="popup-wrap">
 				<checker v-model="VideoIndex" radio-required default-item-class="demo2-item" selected-item-class="demo2-item-selected">
-					<checker-item :value="index" v-for="(item,index) in VideoCollection">
-						<div class="CollectionItem">{{index}}</div>
+					<checker-item :value="index" v-for="(item,index) in VideoCollection" on-change="">
+						<div class="CollectionItem" @click="selectItem(item.plid,item.mid)">第{{index+1}}集{{item.title}}</div>
 					</checker-item>
 				</checker>
 			</div>				
@@ -85,7 +85,8 @@ export default {
 			isEmptyhotlist:false,
 			isVideoCollection:true,//是否为合集
 			VideoCollection:[],//合集
-			VideoIndex:0,
+			currentVideoList:[],//当前集数的前后两级
+			VideoIndex:0,//当前集数
 			showHideOnBlur:false,
         }
     },
@@ -123,12 +124,20 @@ export default {
 				if(res.data.videoList.length>1){
 					this.isVideoCollection=true;
 					this.VideoCollection=res.data.videoList;
-					this.videolist=this.VideoCollection[0];
+					for(var i=0;i<this.VideoCollection.length;i++){
+						if(this.plid==this.VideoCollection[i].plid && this.contentid==this.VideoCollection[i].mid){
+							this.VideoIndex=i;
+							this.videolist=this.VideoCollection[i];
+							this.lastnextVideo(this.VideoCollection,this.VideoIndex);
+							this.loading=false;
+							return false;
+						}
+					}					
 				}else{
 					this.videolist=res.data.videoList[0];
 					this._gethotlist();
-				}
-				this.loading=false;
+					this.loading=false;
+				}				
 			})
         },
 		_getmorerecList(){
@@ -176,7 +185,8 @@ export default {
 			})
 		},
 		selectItem(plid,contentid){
-			this.$router.push({ path: '/playDetail', query: { plid: plid,contentid:contentid}})
+			this.showHideOnBlur=false;
+			this.$router.push({ path: '/playDetail', query: { plid: plid,contentid:contentid}});
 		},
 		backtotop(){
 			this.$refs.scroller.reset({top:0});
@@ -194,8 +204,25 @@ export default {
 			}			
 		},
 		onLookAll(){
-			console.log("1");
+			// console.log("1");
 			this.showHideOnBlur=true;
+		},
+		lastnextVideo(arr,currentindex){
+			if(arr.length<=3){
+				this.currentVideoList=arr;
+				return false;
+			}else{				
+				if(arr.length-1==currentindex){
+					this.currentVideoList=arr.slice(currentindex-2,currentindex+1);
+					return false;
+				}
+				if(currentindex==0){
+					this.currentVideoList=arr.slice(currentindex,currentindex+3);
+					return false;
+				}
+				this.currentVideoList=arr.slice(currentindex-1,currentindex+2);
+			}
+			
 		}
     },
 	watch: {
@@ -350,7 +377,19 @@ export default {
 		padding: 0 2rem;
 		
 		.CollectionItem{
-
+			width: 100%;
+			height: 3rem;
+			border: 1px solid #ccc;
+			display: inline-block;
+			border-radius: 5px;
+			line-height: 3rem;
+			text-align: center;
+			margin: 5px 0; 
+		}
+		.active{
+			border-color: #1991EC;
+			background: #1991EC;
+			color: white;
 		}
 	}
 	.popup-wrap{
