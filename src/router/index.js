@@ -6,6 +6,8 @@ import Ted from "@/components/ted/ted"
 import Speech from "@/components/speech/speech"
 import PlayDetail from "@/components/playDetail/playDetail"
 import Internationalschool from "@/components/internationalschool/internationalschool"
+import Domesticschool from "@/components/domesticschool/domesticschool"
+import Funshare from "@/components/funshare/funshare"
 Vue.use(Router)
 
 export default new Router({
@@ -22,7 +24,9 @@ export default new Router({
         { path: '/index/recommend', component:Recommend},
         { path: '/index/ted', component:Ted},
         { path: '/index/speech', component: Speech},
-        { path: '/index/internationalschool' ,component : Internationalschool}
+        { path: '/index/internationalschool' ,component : Internationalschool},
+        { path: '/index/domesticschool' ,component : Domesticschool},
+        { path: '/index/funshare' ,component : Funshare}
       ]
     },
     {

@@ -36,8 +36,8 @@
 						name:'演讲',
 						router:'/index/speech'					
 					},{
-						name:'趣味课堂',
-						router:'/index/funclass'					
+						name:'趣味分享',
+						router:'/index/funshare'					
 					}
 				],
 				index: 0,
@@ -63,14 +63,23 @@
 		},
 		methods:{
 			onItemClick(index){
-				console.log(index);
+				// console.log(index);
 				this.SET_NAVINDEX(index);
 				let obj=document.querySelectorAll('.vux-tab-item');
+				console.log(obj.length);
 				if(index>0&&index<obj.length-2){
 					let left=(index-1)*obj[index].offsetWidth;
+					// console.log(left);
 					this.$nextTick(() => {
 				      	this.$refs.scroller.reset({left: left})
 				   })
+				}
+				if(index==obj.length-2){
+					let left=(index-2)*obj[index].offsetWidth;
+					// console.log(left);
+					this.$nextTick(() => {
+				      	this.$refs.scroller.reset({left: left})
+				    })
 				}				
 			},
 			...mapMutations([

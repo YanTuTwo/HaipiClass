@@ -1,7 +1,9 @@
 <template>
   <div id="app" style="height: 100%">
-    <drawer :show.sync="showUserMode" :show-mode="showModeValue" :drawer-style="{'background-color':'#fff', width: '200px'}">
-		<div slot="drawer">个人中心</div>
+    <drawer :show.sync="showUserMode" :show-mode="showModeValue" :drawer-style="{'background-color':'#fff', width: '17rem'}">
+		<div slot="drawer">
+			<userCenter></userCenter>			
+		</div>
 		<div slot="default">
 			<router-view @showUserModal="showUser"></router-view>
 		</div>      
@@ -13,12 +15,14 @@
 import {Popup, Drawer } from "vux";
 import {mapMutations} from "vuex"
 import MHeader from "@/components/m-header/m-header"
+import UserCenter from "@/components/userCenter/userCenter"
 export default {
 	name: "App",
 	components: {
-		MHeader,
+			MHeader,
     	Popup,
-   		Drawer
+			Drawer,
+			UserCenter
   	},
   	data() {
     	return {
@@ -45,7 +49,7 @@ export default {
 
 <style>
 @import "./assets/styles/common.css";
-@import url("//at.alicdn.com/t/font_487716_eku1dg3sxik0ggb9.css");
+@import url("//at.alicdn.com/t/font_487716_2rqjdqlgd4zk6gvi.css");
 body {
   	background-color: #fbf9fe;
 }
@@ -61,7 +65,7 @@ html,body {
 .xs-plugin-pullup-container {
 	color: #999;
   background: #fff;
-	line-height: 30px;
+	line-height: 50px;
 }
 .xs-plugin-pulldown-container>div{
 		width: 40px;

@@ -1,9 +1,10 @@
 <template>
 	<div class="index">
-		<x-header>
-			<span slot="overwrite-left">
-				<x-icon type="navicon" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px" @click="showUser"></x-icon>				
-			</span>
+		<x-header :left-options="{showBack: false}">
+			<div class="avatar" @click="showUser">
+				<!-- <x-icon type="navicon" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px" @click="showUser"></x-icon> -->
+				<img src="../../assets/image/touxiang.jpeg" alt="">	
+			</div>
 			<div class="logo"><img src="../../assets/image/logo.png" alt=""></div>
 		</x-header>
 		<navigation></navigation>
@@ -43,6 +44,20 @@ export default {
 			position: absolute;
 			top: 50%;
 			left: 50%;
+		}
+	}
+	.avatar{
+		position: absolute;
+		top: 8px;
+		left: 12px;
+		width: 32px;
+		height: 32px;
+		overflow: hidden;
+		border-radius: 50%;
+		border: 2px solid #fff;
+		img{
+			width: 100%;
+			height: 100%;
 		}
 	}
 </style>

@@ -5,7 +5,7 @@
 		:pullupConfig="{ loadingContent: '<load-more></load-more>',upContent: '加载中...',height:50,content: '上拉加载更多',downContent: '释放加载更多',}">
 			<div class="scrollerwrapper">
 				<div class="videowrapper">
-					<video width="100%" controls="true" :src="videolist.mp4SdUrl" :poster="videolist.imgPath" ref='video' ></video>
+					<video width="100%" controls="true" :src="videolist.mp4HdUrl || videolist.mp4SdUrl" :poster="videolist.imgPath" ref='video' ></video>
 				</div>
 				<p class="viewcount">播放：{{moviedata.hits | ConvertPeople}}次
 					<span class="iconfont icon-fenxiang text-nor"></span>
@@ -13,6 +13,7 @@
 				</p>
 				<div class="movieinfo">
 					<p class="movietit">{{moviedata.tit}}</p>
+					<p class="movie-con" v-if="isVideoCollection"><span>本节课程：</span>{{videolist.title}}</p>
 					<p class="movie-con"><span>讲师：</span>{{moviedata.director}}</p>
 					<p class="movie-con"><span>标签：</span>{{moviedata.tags}}</p>
 					<p class="movie-con"><span>类型：</span>{{moviedata.type}}</p>
@@ -33,7 +34,7 @@
 				</div>
 				<div class="videoBox" v-if="isVideoCollection">
 					<div v-for="(item,index) in currentVideoList">
-						<div class="CollectionItem" @click="selectItem(item.plid,item.mid)" >第{{item.pNumber}}集{{item.title}}</div>
+						<div class="CollectionItem" @click="selectItem(item.plid,item.mid)" :class="{'active':currentVideoIndex==index}">第{{item.pNumber}}集{{item.title}}</div>
 					</div>
 					<x-button  @click.native="onLookAll" plain type="primary" class="custom-primary-blue" v-if="VideoCollection.length>3">查看全部课程</x-button>	
 				</div>
@@ -83,9 +84,10 @@ export default {
 			collected:true,
 			showbtn:false,
 			isEmptyhotlist:false,
-			isVideoCollection:true,//是否为合集
+			isVideoCollection:false,//是否为合集
 			VideoCollection:[],//合集
 			currentVideoList:[],//当前集数的前后两级
+			currentVideoIndex:0,
 			VideoIndex:0,//当前集数
 			showHideOnBlur:false,
         }
@@ -134,6 +136,7 @@ export default {
 						}
 					}					
 				}else{
+					this.isVideoCollection=false;
 					this.videolist=res.data.videoList[0];
 					this._gethotlist();
 					this.loading=false;
@@ -214,15 +217,17 @@ export default {
 			}else{				
 				if(arr.length-1==currentindex){
 					this.currentVideoList=arr.slice(currentindex-2,currentindex+1);
+					this.currentVideoIndex=2;
 					return false;
 				}
 				if(currentindex==0){
 					this.currentVideoList=arr.slice(currentindex,currentindex+3);
+					this.currentVideoIndex=0;
 					return false;
 				}
 				this.currentVideoList=arr.slice(currentindex-1,currentindex+2);
-			}
-			
+				this.currentVideoIndex=1;
+			}			
 		}
     },
 	watch: {
