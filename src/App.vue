@@ -5,7 +5,9 @@
 			<userCenter></userCenter>			
 		</div>
 		<div slot="default">
-			<router-view @showUserModal="showUser"></router-view>
+			<transition appear :name='transitionName'>
+				<router-view @showUserModal="showUser"></router-view>
+			</transition>
 		</div>      
     </drawer>  
   </div>
@@ -26,8 +28,9 @@ export default {
   	},
   	data() {
     	return {
-			showUserMode:false,
-      		showModeValue: "push"
+				showUserMode:false,
+				showModeValue: "push",
+				transitionName: 'slide-left' 
     	};
 	},
 	computed:{
@@ -42,14 +45,22 @@ export default {
 		])
 	},
 	watch:{
-		
+		'$route' (to, from) {
+　　　　let isBack = this.$router.isBack  //  监听路由变化时的状态为前进还是后退
+　　　　　　if(isBack) {
+　　　　　　　　this.transitionName = 'slide-right'
+　　　　　　} else {
+　　　　　　       this.transitionName = 'slide-left'
+　　　　　}
+　　this.$router.isBack = false
+　　}
 	}
 };
 </script>
 
 <style>
 @import "./assets/styles/common.css";
-@import url("//at.alicdn.com/t/font_487716_2rqjdqlgd4zk6gvi.css");
+@import url("//at.alicdn.com/t/font_487716_csznoyimaddndn29.css");
 body {
   	background-color: #fbf9fe;
 }
@@ -79,5 +90,18 @@ html,body {
 }
 .recommend .vux-slider > .vux-swiper > .vux-swiper-item > a > .vux-img{
   background-position: top center;
+}
+.slide-left-enter,
+ .slide-right-leave-active {
+     opacity: 0;
+    -webkit-transform: translate(100%, 0);
+    transform: translate(100%, 0);
+}
+
+.slide-left-leave-active,
+.slide-right-enter {
+     opacity: 0;
+    -webkit-transform: translate(-100%, 0);
+    transform: translate(-100% 0);
 }
 </style>

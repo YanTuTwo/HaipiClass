@@ -18,7 +18,6 @@
         <group :title="('咚咚咙咚呛咚呛。')">
              <div class="funclist">
                 <dl>
-                    <!-- <dt>我就不服你.</dt> -->
                     <dd><span class="iconfont icon-msnui-sms-bubble"></span>我的消息</dd>
                     <dd><span class="iconfont icon-gerenxinxi1"></span>个人信息</dd>
                     <dd><span class="iconfont icon-shoucangyingyuan"></span>我的收藏</dd>

@@ -18,6 +18,7 @@ import Navigation from "@/components/navigation/navigation"
 export default {
 	data(){
 		return {
+			loginstatus:false,
 		}
 	},
 	components:{
@@ -27,7 +28,12 @@ export default {
 	},
 	methods:{
 		showUser(){
-			this.$emit("showUserModal")
+			if(this.loginstatus){
+				this.$emit("showUserModal")
+			}
+			else{
+				this.$router.push({path:'/login'});
+			}
 		},
 	}
 }

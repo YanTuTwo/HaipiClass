@@ -8,6 +8,7 @@ import PlayDetail from "@/components/playDetail/playDetail"
 import Internationalschool from "@/components/internationalschool/internationalschool"
 import Domesticschool from "@/components/domesticschool/domesticschool"
 import Funshare from "@/components/funshare/funshare"
+import Login from "@/components/login/login"
 Vue.use(Router)
 
 export default new Router({
@@ -33,6 +34,11 @@ export default new Router({
       path:'/playDetail',
       name:'playDetail',
       component:PlayDetail
+    },
+    {
+      path:'/login',
+      name:'login',
+      component:Login
     }
   ]
 })
