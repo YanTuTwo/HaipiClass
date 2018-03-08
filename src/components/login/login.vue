@@ -1,7 +1,6 @@
-<template>
-    <transition appear name='fade' mode="out-in">
-    <div class="login">
-        
+<template>   
+     
+    <div class="login">        
         <div class="login-logo"><img src="../../assets/image/logo.png" alt=""></div>
         <div class="form">
             <p><span class="iconfont icon-yonghu"></span><input type="text" placeholder="用户名"></p>
@@ -10,22 +9,40 @@
             <!-- <input type="button"> -->
             <p class="changepassword">
                 忘记密码?
-                <i>新用户注册</i>
+                <i @click="onRegister">新用户注册</i>
             </p>
-        </div>       
+        </div> 
+        <transition name="fade">
+            <div class="register" v-if="showRegister">
+                <div class="register-form">
+                    <group title="">
+                        <x-input title="用户名" name="username" placeholder="请输入用户名" is-type="china-name"></x-input>
+                        <x-input title="密码" name="username" placeholder="请输入密码" is-type="china-name"></x-input>
+                        <x-input title="确认密码" name="username" placeholder="请确认密码" is-type="china-name"></x-input>
+
+                    </group>
+                </div>
+            </div>    
+        </transition>        
     </div>
-    </transition>
 </template>
 <script>
-import {XButton} from "vux";
+import {XButton,Group,XInput} from "vux";
 export default {
     data(){
         return {
-
+            showRegister:false,
         }
     },
     components:{
         XButton,
+        Group,
+        XInput
+    },
+    methods:{
+        onRegister(){
+            this.showRegister=true;
+        }
     }
 }
 </script>
@@ -39,6 +56,7 @@ export default {
     background:url("../../assets/image/9.jpg");
     background-position: center center;
     background-size:cover;
+    overflow: hidden;
     .login-logo{
         width: 16rem;
         margin: 4rem auto;
@@ -49,7 +67,7 @@ export default {
     }
     .form{
         p{
-            padding: 0 2rem;
+            padding: 0 3rem;
             position: relative;
             span{
                 position: absolute;
@@ -97,5 +115,33 @@ export default {
         background: #fff;
         color: #55ccff
     }
+    .register{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        
+        z-index: 1;
+        background: rgba($color: #000000, $alpha: .5);     
+        .register-form{
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 80%;
+            height: 60%;
+            background: #fff;
+            transform:translate(-50%, -50%);
+            border-radius: 5%;
+        }
+    }
+    .fade-enter-active, .fade-leave-active{
+        transition: all 0.5s ease  
+    }          
+    .fade-enter, .fade-leave-active{
+        width: 0;
+        opacity: 0;
+    }
+    
 }
 </style>
