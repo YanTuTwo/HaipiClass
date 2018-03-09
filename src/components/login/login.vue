@@ -3,9 +3,12 @@
     <div class="login">        
         <div class="login-logo"><img src="../../assets/image/logo.png" alt=""></div>
         <div class="form">
-            <p><span class="iconfont icon-yonghu"></span><input type="text" placeholder="用户名"></p>
-            <p><span class="iconfont icon-mima54"></span><input type="password" placeholder="请输入您的密码"></p>
-            <p><x-button :gradients="['#55ccff', '#2e97fb']" class="loginbtn">登录</x-button></p>
+            <p><span class="iconfont icon-yonghu"></span><input type="text" placeholder="用户名" v-model="username"></p>
+            <p><span class="iconfont icon-mima54"></span><input type="password" placeholder="请输入您的密码" v-model="password"></p>
+            <p>
+                <x-button :gradients="['#55ccff', '#2e97fb']" class="loginbtn" @click.native="checkLogin">登录</x-button>
+                <x-button :gradients="['#55ccff', '#2e97fb']" class="loginbtn"  @click.native="nologin">暂不登录</x-button>
+            </p>
             <!-- <input type="button"> -->
             <p class="changepassword">
                 忘记密码?
@@ -15,23 +18,58 @@
         <transition name="fade">
             <div class="register" v-if="showRegister">
                 <div class="register-form">
-                    <group title="">
-                        <x-input title="用户名" name="username" placeholder="请输入用户名" is-type="china-name"></x-input>
-                        <x-input title="密码" name="username" placeholder="请输入密码" is-type="china-name"></x-input>
-                        <x-input title="确认密码" name="username" placeholder="请确认密码" is-type="china-name"></x-input>
-
+                    <group title="*用户名必须以字母开头 + 数字/字母/下划线">        
+                        <x-input title="用户名" name="username" placeholder="请输入用户名"  :is-type="itUsername"></x-input>       
+                        <x-input title="昵称" name="username" placeholder="嗨皮"  :max='10'></x-input>                
                     </group>
+                    <group title="*密码必须由4-16位的数字或字母组成">
+                        <x-input title="密码" type="password" placeholder="请输入密码" :is-type="itPwd" v-model="password1" :max='16'></x-input>
+                        <x-input title="确认密码" type="password" placeholder="请确认密码" v-model="password2" :equal-with="password1" :max='16'></x-input>
+                    </group>
+                    <group>
+                        <x-button @click.native="registerbtn" type="primary">注册</x-button>
+                    </group> 
+                    <div class="closeRegister">
+                        <span class="iconfont icon-2guanbi" @click="showRegister=false"></span>
+                    </div>
                 </div>
+                
             </div>    
         </transition>        
     </div>
 </template>
 <script>
 import {XButton,Group,XInput} from "vux";
+import axios from "axios";
 export default {
     data(){
         return {
             showRegister:false,
+            //登录
+            password:'',
+            username:'',
+            //注册
+            password1:'',
+            password2:'',
+            itUsername:function(value){
+                var reg=/^[A-Za-z][A-Za-z1-9_-]+$/;
+                return {
+                    valid: reg.test(value) == true,
+                    msg: '用户名格式不正确'
+                }
+            },
+            itPwd:function(value){
+                var reg= /^[a-zA-Z0-9]{4,16}$/;
+
+                return {
+                    valid: reg.test(value) == true,
+                    msg: '密码格式不正确'
+                }
+            },
+            //验证
+            pwdPass:false,
+            usernamePass:false,
+            
         }
     },
     components:{
@@ -42,7 +80,40 @@ export default {
     methods:{
         onRegister(){
             this.showRegister=true;
+        },
+        onBlur(){
+            var ret=/^[A-Za-z][A-Za-z1-9_-]+$/;
+                ret.test(value)
+                return {
+                    valid: value === '2333',
+                    msg: 'Must be 2333'
+                }
+        },
+        checkLogin(){
+            if(this.username.trim()=="" || this.password.trim()==""){
+                console.log("用户名或密码不能为空");
+                return false;
+            }
+            console.log("发请求"+this.username+"和"+this.password);
+            axios.post("/api/users/login",{
+                username:this.username,
+                password:this.password,      
+            }).then((res)=>{
+                console.log(res.data);
+            })
+        },
+        nologin(){
+            this.$router.back(-1);
+        },
+        registerbtn(){
+            if(usernamePass && pwdPass){
+                console.log('注册成功');
+            }else{
+
+            }
+            
         }
+
     }
 }
 </script>
@@ -120,26 +191,37 @@ export default {
         top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
-        
+        height: 100%;        
         z-index: 1;
         background: rgba($color: #000000, $alpha: .5);     
+        overflow: hidden;
         .register-form{
             position: absolute;
             top: 50%;
             left: 50%;
             width: 80%;
-            height: 60%;
+            height: 58%;
             background: #fff;
             transform:translate(-50%, -50%);
+            overflow: hidden;
             border-radius: 5%;
+            padding: 2rem 1rem;
+            .closeRegister{
+                text-align: center;
+                margin-top: 2rem;
+                span{
+                    font-size: 2rem;
+                    color: #666;
+                }
+            }
         }
+        
     }
     .fade-enter-active, .fade-leave-active{
         transition: all 0.5s ease  
     }          
     .fade-enter, .fade-leave-active{
-        width: 0;
+        height: 0;
         opacity: 0;
     }
     

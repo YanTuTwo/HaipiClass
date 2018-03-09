@@ -48,7 +48,7 @@ export default {
 
 <style>
 @import "./assets/styles/common.css";
-@import url("//at.alicdn.com/t/font_487716_csznoyimaddndn29.css");
+@import url("//at.alicdn.com/t/font_487716_pbmcpc8uuta3v7vi.css");
 body {
   	background-color: #fbf9fe;
 }

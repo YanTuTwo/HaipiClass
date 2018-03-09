@@ -6,7 +6,9 @@ import store from "./store"
 import VueLazyLoad from "vue-lazyload"
 Vue.config.productionTip = false
 import "babel-polyfill"
+import axios from "axios"
 
+axios.defaults.withCredentials = true; 
 fastclick.attach(document.body);//解决300毫秒延迟问题
 
 Vue.use(VueLazyLoad,{

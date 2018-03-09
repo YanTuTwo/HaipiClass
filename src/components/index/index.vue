@@ -15,6 +15,7 @@
 import {XHeader,Scroller,Tab,TabItem} from "vux"
 import MHeader from "@/components/m-header/m-header"
 import Navigation from "@/components/navigation/navigation"
+import axios from "axios";
 export default {
 	data(){
 		return {
@@ -28,13 +29,20 @@ export default {
 	},
 	methods:{
 		showUser(){
-			if(this.loginstatus){
-				this.$emit("showUserModal")
-			}
-			else{
-				this.$router.push({path:'/login'});
-			}
+			this.checkLoginStatus();
+			// if(this.loginstatus){
+			// 	this.$emit("showUserModal")
+			// }
+			// else{
+			// 	this.$router.push({path:'/login'});
+			// }
 		},
+		checkLoginStatus(){
+			
+			axios.post('/api/users/checklogin',{aa:"1"}).then((res)=>{
+				console.log(res.data);
+			})
+		}
 	}
 }
 </script>
