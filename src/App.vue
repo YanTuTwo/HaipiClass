@@ -2,7 +2,7 @@
   <div id="app" style="height: 100%">
     <drawer :show.sync="showUserMode" :show-mode="showModeValue" :drawer-style="{'background-color':'#fff', width: '17rem'}">
 		<div slot="drawer">
-			<userCenter></userCenter>			
+			<userCenter @showUserModal="showUser"></userCenter>			
 		</div>
 		<div slot="default">
 			<transition appear :name='transitionName'>
@@ -15,6 +15,7 @@
 
 <script>
 import {Popup, Drawer } from "vux";
+import {mapMutations} from "vuex";
 import MHeader from "@/components/m-header/m-header"
 import UserCenter from "@/components/userCenter/userCenter"
 export default {
@@ -32,6 +33,9 @@ export default {
 				transitionName: 'slide-left' 
     	};
 	},
+	mounted(){
+		this.checkLogin();
+	},
 	computed:{
 
 	},
@@ -39,6 +43,14 @@ export default {
 		showUser(){
 			this.showUserMode=!this.showUserMode;
 		},
+		checkLogin(){
+			if(window.localStorage.getItem('userid') && window.localStorage.getItem('password')){
+				this.SET_LOGINSTATUS(true);
+			}
+		},
+		...mapMutations([
+			'SET_LOGINSTATUS'
+		])
 	},
 	watch:{
 		

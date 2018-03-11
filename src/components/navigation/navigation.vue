@@ -63,10 +63,10 @@
 		},
 		methods:{
 			onItemClick(index){
-				// console.log(index);
+				console.log(index);
 				this.SET_NAVINDEX(index);
 				let obj=document.querySelectorAll('.vux-tab-item');
-				console.log(obj.length);
+				// console.log(obj.length);
 				if(index>0&&index<obj.length-2){
 					let left=(index-1)*obj[index].offsetWidth;
 					// console.log(left);

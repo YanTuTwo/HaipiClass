@@ -6,5 +6,8 @@ const mutations={
     [types.SET_NAVINDEX](state,navindex){
         state.navindex=navindex
     },
+    [types.SET_LOGINSTATUS](state,loginstatus){
+        state.loginstatus=loginstatus
+    },
 }
 export default mutations;

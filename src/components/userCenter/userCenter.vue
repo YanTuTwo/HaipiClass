@@ -24,7 +24,7 @@
                     <dd><span class="iconfont icon-icon--"></span>我的作品</dd>
                     <dd><span class="iconfont icon-jiluliebiao"></span>播放记录</dd>
                     <dd><span class="iconfont icon-guanyuwomen"></span>关于作者</dd>
-                    <dd><span class="iconfont icon-zhuxiaoguanji"></span>退出登录</dd>
+                    <dd @click="onExit"><span class="iconfont icon-zhuxiaoguanji"></span>注销</dd>
                 </dl>
             </div>
         </group>
@@ -32,6 +32,7 @@
     </div>
 </template>
 <script>
+import {mapMutations} from "vuex";
 import { Flexbox, FlexboxItem, Blur,Scroller,Group,CellBox } from 'vux'
 export default {
     data(){
@@ -57,6 +58,17 @@ export default {
         document.getElementById('scroll').style.width=(this.bgList.length+1)*6+'rem';
         this.bgAvatarHeight=parseFloat(document.querySelector('html').style.fontSize)*12;
        
+    },
+    methods:{
+        onExit(){
+            window.localStorage.clear();
+            this.SET_LOGINSTATUS(false);
+            this.$emit("showUserModal");
+            this.$router.push({path:"/login"});
+        },
+        ...mapMutations([
+			'SET_LOGINSTATUS'
+		])
     }
 }
 </script>

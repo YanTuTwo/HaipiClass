@@ -19,7 +19,12 @@ import axios from "axios";
 export default {
 	data(){
 		return {
-			loginstatus:false,
+			// loginstatus:false,
+		}
+	},
+	computed:{
+		loginstatus(){
+			return this.$store.state.loginstatus;
 		}
 	},
 	components:{
@@ -29,13 +34,13 @@ export default {
 	},
 	methods:{
 		showUser(){
-			this.checkLoginStatus();
-			// if(this.loginstatus){
-			// 	this.$emit("showUserModal")
-			// }
-			// else{
-			// 	this.$router.push({path:'/login'});
-			// }
+			// this.checkLoginStatus();
+			if(this.loginstatus){
+				this.$emit("showUserModal")
+			}
+			else{
+				this.$router.push({path:'/login'});
+			}
 		},
 		checkLoginStatus(){
 			

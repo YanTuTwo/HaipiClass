@@ -40,6 +40,7 @@
 </template>
 <script>
 import {XButton,Group,XInput} from "vux";
+import {mapMutations} from "vuex";
 import axios from "axios";
 export default {
     data(){
@@ -81,14 +82,6 @@ export default {
         onRegister(){
             this.showRegister=true;
         },
-        onBlur(){
-            var ret=/^[A-Za-z][A-Za-z1-9_-]+$/;
-                ret.test(value)
-                return {
-                    valid: value === '2333',
-                    msg: 'Must be 2333'
-                }
-        },
         checkLogin(){
             if(this.username.trim()=="" || this.password.trim()==""){
                 console.log("用户名或密码不能为空");
@@ -100,20 +93,30 @@ export default {
                 password:this.password,      
             }).then((res)=>{
                 console.log(res.data);
+                if(res.data.code==0){
+                    window.localStorage.setItem("userid",this.username);
+                    window.localStorage.setItem("password",this.password);
+                    this.SET_LOGINSTATUS(true);
+                    this.$router.push({path:'index/recommend'});
+                }else{
+                    console.log("账号或密码不正确");
+                }
             })
         },
         nologin(){
             this.$router.back(-1);
         },
         registerbtn(){
-            if(usernamePass && pwdPass){
+            if(this.usernamePass && this.pwdPass){
                 console.log('注册成功');
             }else{
 
             }
             
-        }
-
+        },
+        ...mapMutations([
+			'SET_LOGINSTATUS'
+		])
     }
 }
 </script>
@@ -143,7 +146,7 @@ export default {
             span{
                 position: absolute;
                 top: 0;
-                left: 3rem;
+                left: 4rem;
                 color: #fff;
                 line-height: 3rem;
                 font-size: 2rem;
@@ -200,7 +203,7 @@ export default {
             top: 50%;
             left: 50%;
             width: 80%;
-            height: 58%;
+            // height: 58%;
             background: #fff;
             transform:translate(-50%, -50%);
             overflow: hidden;
