@@ -19,7 +19,7 @@
              <div class="funclist">
                 <dl>
                     <dd><span class="iconfont icon-msnui-sms-bubble"></span>我的消息</dd>
-                    <dd><span class="iconfont icon-gerenxinxi1"></span>个人信息</dd>
+                    <dd @click="goUserInfo"><span class="iconfont icon-gerenxinxi1" ></span>个人信息</dd>
                     <dd><span class="iconfont icon-shoucangyingyuan"></span>我的收藏</dd>
                     <dd><span class="iconfont icon-icon--"></span>我的作品</dd>
                     <dd><span class="iconfont icon-jiluliebiao"></span>播放记录</dd>
@@ -28,12 +28,18 @@
                 </dl>
             </div>
         </group>
-       
+        <div>
+            <confirm v-model="confirmshow"
+            :title="('注销本账户？')"
+            @on-confirm="onConfirm">
+                <p style="text-align:center;">{{ ('Are you sure?') }}</p>
+            </confirm>
+        </div>
     </div>
 </template>
 <script>
 import {mapMutations} from "vuex";
-import { Flexbox, FlexboxItem, Blur,Scroller,Group,CellBox } from 'vux'
+import { Flexbox, FlexboxItem, Blur,Scroller,Group,CellBox,Confirm } from 'vux'
 export default {
     data(){
         return {
@@ -44,6 +50,7 @@ export default {
             ],
             bgAvatarUrl:'https://o3e85j0cv.qnssl.com/tulips-1083572__340.jpg',
             bgAvatarHeight:0,
+            confirmshow:false,
         }
     },
     components:{
@@ -52,7 +59,8 @@ export default {
         FlexboxItem,
         Scroller,
         Group,
-        CellBox
+        CellBox,
+        Confirm
     },
     mounted(){
         document.getElementById('scroll').style.width=(this.bgList.length+1)*6+'rem';
@@ -61,14 +69,25 @@ export default {
     },
     methods:{
         onExit(){
+            this.confirmshow=true;
+           
+        },
+        ...mapMutations([
+			'SET_LOGINSTATUS'
+        ]),
+        onCancel(){
+            console.log("cancel");
+        },
+        onConfirm(){
             window.localStorage.clear();
             this.SET_LOGINSTATUS(false);
             this.$emit("showUserModal");
             this.$router.push({path:"/login"});
         },
-        ...mapMutations([
-			'SET_LOGINSTATUS'
-		])
+        goUserInfo(){
+            this.$emit("showUserModal");
+            this.$router.push({path:'/userinfo'});
+        }
     }
 }
 </script>

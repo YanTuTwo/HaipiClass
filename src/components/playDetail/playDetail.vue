@@ -245,9 +245,9 @@ export default {
 		background: #fff;
 	}
 	video{
-		width: 100%;
+		// width: 100%;
 		display: block;
-		height: 14rem;
+		// height: 14rem;
 	}
 	.viewcount{
 		width: 100%;

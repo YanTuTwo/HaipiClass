@@ -43,7 +43,7 @@ export default {
 	},
     methods:{
         _getclasslist(){
-            axios.get('http://39.108.233.223:8080/api/getclasslist', {
+            axios.get('/api/getclasslist', {
 				params: {
 					id: this.id,
 					type: this.type,
@@ -61,13 +61,25 @@ export default {
 			console.log(this.$refs.tedcontent)
         },
         pullup(){
-
+			this.cursor = this.pagesize + this.cursor;
+			this.loading = true;
+			this._getclasslist();
+			this.$nextTick(() => {
+				this.$refs.scroller.reset();
+				this.$refs.scroller.donePullup();
+			})
         },
-        onscroll(){
-
+        onscroll(position){
+			if(position!=null){
+				if(position.top>200){
+					this.showbtn=true;
+				}else{
+					this.showbtn=false
+				}
+			}
         },
         backtotop(){
-
+			this.$refs.scroller.reset({top:0});
         },
         goPlayDetail(plid,contentid){
 			this.$router.push({ path: '/playDetail', query: { plid: plid,contentid:contentid}})
@@ -79,5 +91,19 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
+.backtotop {
+	position: fixed;
+	bottom: 2rem;
+	right: 2rem;
+	width: 3rem;
+	height: 3rem;
+	text-align: center;
+	background: rgba(0,0,0,.4);
+	border-radius: 50%; 
+	span {
+		color: #fff;
+		font-size: 2rem;
+		line-height: 3rem; 
+	} 
+}
 </style>

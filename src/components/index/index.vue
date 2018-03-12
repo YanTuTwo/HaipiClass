@@ -13,7 +13,6 @@
 </template>
 <script>
 import {XHeader,Scroller,Tab,TabItem} from "vux"
-import MHeader from "@/components/m-header/m-header"
 import Navigation from "@/components/navigation/navigation"
 import axios from "axios";
 export default {
@@ -28,7 +27,6 @@ export default {
 		}
 	},
 	components:{
-		MHeader,
 		XHeader,
 		Navigation
 	},

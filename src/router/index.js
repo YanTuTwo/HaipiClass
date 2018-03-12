@@ -9,6 +9,7 @@ import Internationalschool from "@/components/internationalschool/internationals
 import Domesticschool from "@/components/domesticschool/domesticschool"
 import Funshare from "@/components/funshare/funshare"
 import Login from "@/components/login/login"
+import Userinfo from "@/components/userinfo/userinfo"
 Vue.use(Router)
 
 export default new Router({
@@ -39,6 +40,11 @@ export default new Router({
       path:'/login',
       name:'login',
       component:Login
+    },
+    {
+      path:'/userinfo',
+      name:'userinfo',
+      component:Userinfo,
     }
   ]
 })
