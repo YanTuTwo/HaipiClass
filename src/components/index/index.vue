@@ -3,7 +3,7 @@
 		<x-header :left-options="{showBack: false}">
 			<div class="avatar" @click="showUser">
 				<!-- <x-icon type="navicon" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px" @click="showUser"></x-icon> -->
-				<img src="../../assets/image/touxiang.jpeg" alt="">	
+				<img :src="userBaseInfo.avatar" alt="">	
 			</div>
 			<div class="logo"><img src="../../assets/image/logo.png" alt=""></div>
 		</x-header>
@@ -19,6 +19,12 @@ export default {
 	data(){
 		return {
 			// loginstatus:false,
+		}
+	},
+	props:{
+		userBaseInfo:{
+			type:Object,
+			default:{}
 		}
 	},
 	computed:{

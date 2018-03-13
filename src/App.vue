@@ -2,11 +2,11 @@
   <div id="app" style="height: 100%">
     <drawer :show.sync="showUserMode" :show-mode="showModeValue" :drawer-style="{'background-color':'#fff', width: '17rem'}">
 		<div slot="drawer">
-			<userCenter @showUserModal="showUser"></userCenter>			
+			<userCenter @showUserModal="showUser" :userBaseInfo='userBaseInfo'></userCenter>			
 		</div>
 		<div slot="default">
 			<transition appear :name='transitionName'>
-				<router-view @showUserModal="showUser"></router-view>
+				<router-view @showUserModal="showUser" :userBaseInfo='userBaseInfo'></router-view>
 			</transition>
 		</div>      
     </drawer>  
@@ -15,8 +15,9 @@
 
 <script>
 import {Popup, Drawer } from "vux";
-import {mapMutations} from "vuex";
+import {mapMutations,mapGetters} from "vuex";
 import UserCenter from "@/components/userCenter/userCenter"
+import axios from "axios"
 export default {
 	name: "App",
 	components: {
@@ -28,14 +29,17 @@ export default {
     	return {
 				showUserMode:false,
 				showModeValue: "push",
-				transitionName: 'slide-left' 
+				transitionName: 'slide-left',
+				userBaseInfo:{},
     	};
 	},
 	mounted(){
 		this.checkLogin();
 	},
 	computed:{
-
+		...mapGetters([
+				"loginstatus"
+			])
 	},
 	methods:{
 		showUser(){
@@ -46,12 +50,28 @@ export default {
 				this.SET_LOGINSTATUS(true);
 			}
 		},
+		getUserInfo(){
+			axios.get("/api/users/getuserinfo",{
+				params:{
+					userid:window.localStorage.getItem("userid"),
+				},
+			}).then((res)=>{
+				if(res.data.code){
+					this.userBaseInfo=res.data.data;
+				}				
+			})
+		},
 		...mapMutations([
-			'SET_LOGINSTATUS'
+			'SET_LOGINSTATUS',
 		])
 	},
 	watch:{
-		
+		loginstatus(){
+			console.log("dengluzhuangtai:"+this.loginstatus);
+			if(this.loginstatus){
+				this.getUserInfo();
+			}
+		}
 	}
 };
 </script>

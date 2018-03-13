@@ -99,6 +99,7 @@ export default {
                     this.$vux.toast.text('登录成功', 'bottom');
                     window.localStorage.setItem("userid",this.userid);
                     window.localStorage.setItem("password",this.password);
+                    console.log("存入缓存");
                     this.SET_LOGINSTATUS(true);
                     this.$router.push({path:'index/recommend'});
                 }else{

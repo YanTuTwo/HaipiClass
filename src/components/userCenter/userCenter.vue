@@ -1,12 +1,9 @@
 <template>
     <div class="usercenter">
         <blur :blur-amount=0 :url="bgAvatarUrl" :height="bgAvatarHeight">
-            <p class="center"><img src="../../assets/image/touxiang.jpeg"></p>
-            <p class="username center">YanTuTu</p>
+            <p class="center"><img :src="userBaseInfo.avatar==''?'../../assets/imgae/touxiang.jpeg':userBaseInfo.avatar"></p>
+            <p class="username center">{{userBaseInfo.username}}</p>
         </blur>
-        <!-- <flexbox :gutter="0">
-            <flexbox-item v-for="(img, index) in bgList" :key="index"><img :src="img" style="width:100%" @click="bgAvatarUrl = img"/></flexbox-item>
-        </flexbox> -->
         <div class="bgscroll">
             <scroller lock-y :scrollbar-x=false>
                 <div class="box1" id="scroll">
@@ -51,8 +48,15 @@ export default {
             bgAvatarUrl:'https://o3e85j0cv.qnssl.com/tulips-1083572__340.jpg',
             bgAvatarHeight:0,
             confirmshow:false,
+            useravatar:this.userBaseInfo.avatar || '../../assets/image/touxiang.jpeg'
         }
     },
+    props:{
+		userBaseInfo:{
+			type:Object,
+			default:{}
+		}
+	},
     components:{
         Blur,
         Flexbox,
