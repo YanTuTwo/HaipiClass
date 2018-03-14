@@ -116,7 +116,7 @@ export default {
             if(usernamereg.test(this.registeruser) && pwdreg.test(this.password1) && this.password1==this.password2 && this.nickname!=''){
                 axios.post('/api/users/register',{
                     userid:this.registeruser,
-                    username:this.nickname,
+                    nickname:this.nickname,
                     password:this.password1,
                 }).then((res)=>{
                     if(res.data.code){
@@ -127,6 +127,8 @@ export default {
                         this.nickname="";
                         this.password1="";
                         this.password2="";                        
+                    }else if(!res.data.code){
+                        this.$vux.toast.text('该用户名已被注册！', 'middle');
                     }else{
                         this.$vux.toast.text('注册失败！请稍后再试', 'middle');
                     }

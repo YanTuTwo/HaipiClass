@@ -1,8 +1,8 @@
 <template>
     <div class="usercenter">
         <blur :blur-amount=0 :url="bgAvatarUrl" :height="bgAvatarHeight">
-            <p class="center"><img :src="userBaseInfo.avatar==''?'../../assets/imgae/touxiang.jpeg':userBaseInfo.avatar"></p>
-            <p class="username center">{{userBaseInfo.username}}</p>
+            <p class="center" @click="goUserInfo"><img :src="userBaseInfo.avatar==''?'../../assets/imgae/touxiang.jpeg':userBaseInfo.avatar"></p>
+            <p class="username center">{{userBaseInfo.nickname}}</p>
         </blur>
         <div class="bgscroll">
             <scroller lock-y :scrollbar-x=false>
@@ -48,7 +48,7 @@ export default {
             bgAvatarUrl:'https://o3e85j0cv.qnssl.com/tulips-1083572__340.jpg',
             bgAvatarHeight:0,
             confirmshow:false,
-            useravatar:this.userBaseInfo.avatar || '../../assets/image/touxiang.jpeg'
+            useravatar:this.userBaseInfo.avatar
         }
     },
     props:{
