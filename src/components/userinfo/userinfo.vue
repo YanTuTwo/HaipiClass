@@ -47,6 +47,7 @@ import axios from 'axios';
 export default {
     data(){
         return {
+            oldurl:'',
             confirmshow:false,
             sexlist:['男','女'],
             compressData:'',//压缩处理后的图片数据           
@@ -70,6 +71,7 @@ export default {
 				if(res.data.code){
                     console.log(res.data.data);
                     this.userBaseInfo=res.data.data;
+                    this.oldurl=res.data.data.avatar;
 				}				
 			})
 		},
@@ -97,6 +99,7 @@ export default {
             // event.preventDefault();
             let formData=new FormData();             
             formData.append('file',self.compressData);
+            formData.append('avatar',self.oldurl);
             formData.append('userid',window.localStorage.getItem('userid'));
             formData.append('nickname',self.userBaseInfo.nickname);
             formData.append('age',self.userBaseInfo.age);
