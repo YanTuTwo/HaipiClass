@@ -3,58 +3,58 @@
         <x-header :left-options="{backText: ''}">个人信息</x-header>
         <div class="user_form">
             <div class="uf_avatar">
-                <img :src="avatar" alt="">                
+                <img :src="userBaseInfo.avatar" alt="">                
             </div>
             <group>      
                 <cell primary="content"> 
-                    <label for="file"><span class="iconfont icon-icons01"></span>点击更改头像</label>
+                    <label for="file"><span class="iconfont icon-icons01"></span>上传新头像</label>
                     <input type="file" id="file" @change="getFile($event)" style="display: none;">
                 </cell>   
             </group>
             <group title="昵称：">       
-                <x-input type="text" v-model="name" placeholder="屌大的名字"></x-input>
+                <x-input type="text" v-model="userBaseInfo.nickname" placeholder="屌大的名字"></x-input>
             </group>    
             <group title="年龄：">
-                <cell :inline-desc="age" primary="content">
-                    <range v-model="age"></range>
+                <cell :inline-desc="userBaseInfo.age" primary="content">
+                    <range v-model="userBaseInfo.age"></range>
                 </cell>
             </group>
             <group  title="性别：">
-                <radio :options="sex" v-model="defaultsex"></radio>
+                <radio :options="sexlist" v-model="userBaseInfo.sex"></radio>
             </group>  
             <group title="简介：">
-                 <x-textarea placeholder="该骚年啥都没写~" :show-counter="false" :rows="3" v-model="intro"></x-textarea>
+                 <x-textarea placeholder="该骚年啥都没写~" :show-counter="false" :rows="3" v-model="userBaseInfo.intro"></x-textarea>
             </group> 
             <div class="saveBtn">
-                <x-button @click.native="submitForm($event)" type="primary">保存</x-button>
+                <x-button @click.native="showBtn" type="primary">修改</x-button>
             </div>                 
         </div> 
-        
+        <div>
+            <confirm v-model="confirmshow"
+            :title="('是否保存？')"
+            @on-confirm="submitForm">
+                <p style="text-align:center;">{{ ('Are you sure?') }}</p>
+            </confirm>
+        </div>
     </div>
 </template>
 <script>
 import Vue from "vue";
-import {XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,ToastPlugin} from "vux";
+import {XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,ToastPlugin,Confirm} from "vux";
 Vue.use(ToastPlugin);
 import {mapMutations} from "vuex"
 import axios from 'axios';
 export default {
     data(){
         return {
-            name: '',
-            age: 18,
-            file: '',
-            avatar:'http://192.168.1.146:3000/images/avatarimg/touxiang.jpeg',
-            defaultsex:'男',
-            sex:['男','女'],
-            email:'',
-            compressData:'',
-            intro:'',
-            userBaseInfo:'',
+            confirmshow:false,
+            sexlist:['男','女'],
+            compressData:'',//压缩处理后的图片数据           
+            userBaseInfo:{},
         }
     },
     components:{
-        XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio
+        XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,Confirm
     },
     mounted(){
         //发请求拿数据
@@ -68,34 +68,40 @@ export default {
 				},
 			}).then((res)=>{
 				if(res.data.code){
-					console.log(res.data.data);
+                    console.log(res.data.data);
+                    this.userBaseInfo=res.data.data;
 				}				
 			})
 		},
         getFile(event) {
             var self=this;
-            self.file = event.target.files[0];
-            if (self.file.type.indexOf("image") == 0) {
+            // self.userBaseInfo.file = event.target.files[0];
+            console.log(event.target.files[0]);
+            if(!event.target.files[0]){
+                return false;
+            }
+            if (event.target.files[0].type.indexOf("image") == 0) {
                 var fr = new FileReader();
-                fr.readAsDataURL(self.file);
+                fr.readAsDataURL(event.target.files[0]);
                 fr.onload=function(){
-                    self.avatar=fr.result;
+                    self.userBaseInfo.avatar=fr.result;
                     self.compress();                    
                 }    
             }else{
                  this.$vux.toast.text('请选择图片进行上传', 'middle');
+                 return ;
             }       
         },
-        submitForm(event){
+        submitForm(){
             var self=this;
-            event.preventDefault();
+            // event.preventDefault();
             let formData=new FormData();             
             formData.append('file',self.compressData);
             formData.append('userid',window.localStorage.getItem('userid'));
-            formData.append('name',self.name);
-            formData.append('age',self.age);
-            formData.append('sex',self.defaultsex);
-            formData.append('intro',self.intro);
+            formData.append('nickname',self.userBaseInfo.nickname);
+            formData.append('age',self.userBaseInfo.age);
+            formData.append('sex',self.userBaseInfo.sex);
+            formData.append('intro',self.userBaseInfo.intro);
             const config = {
                 headers: {
                     "Content-Type": "multipart/form-data"
@@ -105,7 +111,6 @@ export default {
                 if(res.data.code){
                     this.$vux.toast.text('保存成功！', 'bottom');
                     this.SET_LOGINSTATUS(false);
-
                     setTimeout(function(){
                         self.$router.push('/index/recommend');
                         self.SET_LOGINSTATUS(true);
@@ -113,6 +118,9 @@ export default {
                     
                 }
             })       
+        },
+        showBtn(){
+            this.confirmshow=true;
         },
         compress(){
             var self=this;
@@ -122,7 +130,7 @@ export default {
             var canvas = document.createElement('canvas');
             var context = canvas.getContext('2d');
 
-            img.src = self.avatar;
+            img.src = self.userBaseInfo.avatar;
             img.onload=function(){
                 console.log("开始压碎");
                 var originWidth = this.width;
@@ -157,6 +165,13 @@ export default {
         ...mapMutations([
 			'SET_LOGINSTATUS',
 		])
+    },
+    watch:{
+        userBaseInfo:{
+            handler:function(val,oldval){  
+                },  
+            deep:true//对象内部的属性监听，也叫深度监听  
+        }
     }
 }
 </script>
