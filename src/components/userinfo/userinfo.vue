@@ -23,7 +23,7 @@
                 <radio :options="sex" v-model="defaultsex"></radio>
             </group>  
             <group title="简介：">
-                 <x-textarea placeholder="该骚年啥都没写~" :show-counter="false" :rows="3"></x-textarea>
+                 <x-textarea placeholder="该骚年啥都没写~" :show-counter="false" :rows="3" v-model="intro"></x-textarea>
             </group> 
             <div class="saveBtn">
                 <x-button @click.native="submitForm($event)" type="primary">保存</x-button>
@@ -33,7 +33,10 @@
     </div>
 </template>
 <script>
-import {XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio} from "vux"
+import Vue from "vue";
+import {XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,ToastPlugin} from "vux";
+Vue.use(ToastPlugin);
+import {mapMutations} from "vuex"
 import axios from 'axios';
 export default {
     data(){
@@ -41,10 +44,13 @@ export default {
             name: '',
             age: 18,
             file: '',
-            avatar:'http://192.168.1.141:3000/images/avatarimg/touxiang.jpeg',
+            avatar:'http://192.168.1.146:3000/images/avatarimg/touxiang.jpeg',
             defaultsex:'男',
             sex:['男','女'],
             email:'',
+            compressData:'',
+            intro:'',
+            userBaseInfo:'',
         }
     },
     components:{
@@ -52,36 +58,105 @@ export default {
     },
     mounted(){
         //发请求拿数据
+        this.getUserInfo();
     },
     methods:{
+        getUserInfo(){
+			axios.get("/api/users/getuserinfo",{
+				params:{
+					userid:window.localStorage.getItem("userid"),
+				},
+			}).then((res)=>{
+				if(res.data.code){
+					console.log(res.data.data);
+				}				
+			})
+		},
         getFile(event) {
-            this.file = event.target.files[0];
             var self=this;
-            var fr = new FileReader();
-            fr.readAsDataURL(this.file);
-            fr.onload=function(){
-                self.avatar=fr.result;
-            }
-           
+            self.file = event.target.files[0];
+            if (self.file.type.indexOf("image") == 0) {
+                var fr = new FileReader();
+                fr.readAsDataURL(self.file);
+                fr.onload=function(){
+                    self.avatar=fr.result;
+                    self.compress();                    
+                }    
+            }else{
+                 this.$vux.toast.text('请选择图片进行上传', 'middle');
+            }       
         },
         submitForm(event){
-            console.log("1");
             var self=this;
             event.preventDefault();
-            let formData=new FormData(); 
-                formData.append('file',self.file);
-                formData.append('userid',window.localStorage.getItem('userid'));
-                formData.append('name',self.name);
-                formData.append('age',self.age);
-                const config = {
-                    headers: {
-                        "Content-Type": "multipart/form-data"
-                    }
-                };
-                axios.post("/api/users/update",formData,config).then((res)=>{
-                    console.log(res.data);
-                })       
+            let formData=new FormData();             
+            formData.append('file',self.compressData);
+            formData.append('userid',window.localStorage.getItem('userid'));
+            formData.append('name',self.name);
+            formData.append('age',self.age);
+            formData.append('sex',self.defaultsex);
+            formData.append('intro',self.intro);
+            const config = {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            };
+            axios.post("/api/users/update",formData,config).then((res)=>{
+                if(res.data.code){
+                    this.$vux.toast.text('保存成功！', 'bottom');
+                    this.SET_LOGINSTATUS(false);
+
+                    setTimeout(function(){
+                        self.$router.push('/index/recommend');
+                        self.SET_LOGINSTATUS(true);
+                    },1000)                    
+                    
+                }
+            })       
         },
+        compress(){
+            var self=this;
+            // 压缩图片需要的一些元素和对象
+            var reader = new FileReader(), img = new Image();
+            // 缩放图片需要的canvas
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+
+            img.src = self.avatar;
+            img.onload=function(){
+                console.log("开始压碎");
+                var originWidth = this.width;
+                var originHeight = this.height;
+                // 最大尺寸限制
+                var maxWidth = 400, maxHeight = 400;
+                // 目标尺寸
+                var targetWidth = originWidth, targetHeight = originHeight;
+                // 图片尺寸超过400x400的限制
+                if (originWidth > maxWidth || originHeight > maxHeight) {
+                    if (originWidth / originHeight > maxWidth / maxHeight) {
+                        // 更宽，按照宽度限定尺寸
+                        targetWidth = maxWidth;
+                        targetHeight = Math.round(maxWidth * (originHeight / originWidth));
+                    } else {
+                        targetHeight = maxHeight;
+                        targetWidth = Math.round(maxHeight * (originWidth / originHeight));
+                    }
+                }
+                    
+                // canvas对图片进行缩放
+                canvas.width = targetWidth;
+                canvas.height = targetHeight;
+                // 清除画布
+                context.clearRect(0, 0, targetWidth, targetHeight);
+                // 图片压缩
+                context.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+                self.compressData=canvas.toDataURL();
+            }           
+        },
+        ...mapMutations([
+			'SET_LOGINSTATUS',
+		])
     }
 }
 </script>
