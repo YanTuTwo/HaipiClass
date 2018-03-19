@@ -10,6 +10,7 @@ import Domesticschool from "@/components/domesticschool/domesticschool"
 import Funshare from "@/components/funshare/funshare"
 import Login from "@/components/login/login"
 import Userinfo from "@/components/userinfo/userinfo"
+import UserCollect from "@/components/userCollect/userCollect"
 Vue.use(Router)
 
 export default new Router({
@@ -45,6 +46,11 @@ export default new Router({
       path:'/userinfo',
       name:'userinfo',
       component:Userinfo,
+    },
+    {
+      path:'/userCollect',
+      name:'userCollect',
+      component:UserCollect
     }
   ]
 })

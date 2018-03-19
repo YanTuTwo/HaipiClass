@@ -71,6 +71,7 @@ import {mapGetters,mapMutations} from "vuex"
 import listview from '@/common//listview/listview'
 import axios from 'axios'
 export default {
+	props:['userBaseInfo'],
     data(){
         return {
             moviedata:[],
@@ -103,7 +104,12 @@ export default {
 		CheckerItem,
 		XButton,
 		Popup
-    },
+	},
+	computed:{
+		...mapGetters([
+			'loginstatus',
+		])
+	},
     mounted(){
         console.log(this.$route.query);
 		this.initDetail();
@@ -114,7 +120,7 @@ export default {
 			this.loading=true;
 			this.plid=this.$route.query.plid;
 			this.contentid=this.$route.query.contentid;
-			this._getmoviedata();				
+			this._getmoviedata();		
 		},
 		//获取当前id的视频信息
         _getmoviedata(){
@@ -178,7 +184,24 @@ export default {
 		    this._getmorerecList();			    
         },
 		onCollect(){
-			
+			console.log("1");
+			if(this.loginstatus){
+				//发收藏请求
+				axios.post('/api/users/addCollect',{
+					plid :this.plid,
+					contentid:this.contentid,
+				}).then((res)=>{
+					if(res.code){
+						console.log(res.data);
+					}else{
+						this.$vux.toast.text('收藏失败', 'middle');
+					}
+					
+				})
+				this.collected=!this.collected;
+			}else{
+				this.$vux.toast.text('登录后才能收藏喔！', 'middle');
+			}
 		},
 		lookmore(){
 			this.hotlistflag='all';
@@ -337,17 +360,18 @@ export default {
 		margin-top: 1rem;
 		color: #333333;
 	}
-	.viewcount span{
-		color: #ccc;
-		float: right;
-		margin-left: 1rem;
-		font-size: 1.4rem;
-		line-height: 2rem;
+	.viewcount{
+		span{
+			color: #ccc;
+			float: right;
+			margin-left: 1rem;
+			font-size: 1.4rem;
+			line-height: 2rem;
+		}
 		.collectedbtn{
 			color: #F74342;
 		}
-	}
-	
+	}	
 	.backtotop {
 		position: fixed;
 		bottom: 6rem;
@@ -390,6 +414,10 @@ export default {
 			line-height: 3rem;
 			text-align: center;
 			margin: 5px 0; 
+			overflow: hidden;
+			text-overflow:ellipsis;
+			white-space: nowrap;
+			padding: 0 1rem;
 		}
 		.active{
 			border-color: #1991EC;

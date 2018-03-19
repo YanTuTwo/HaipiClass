@@ -2,11 +2,12 @@
     <div class="userinfo">
         <x-header :left-options="{backText: ''}">个人信息</x-header>
         <div class="user_form">
-            <div class="uf_avatar">
-                <img :src="userBaseInfo.avatar" alt="">                
-            </div>
+            
             <group>      
                 <cell primary="content"> 
+                    <div class="uf_avatar">
+                        <img :src="userBaseInfo.avatar" alt="">                
+                    </div>
                     <label for="file"><span class="iconfont icon-icons01"></span>上传新头像</label>
                     <input type="file" id="file" @change="getFile($event)" style="display: none;">
                 </cell>   
@@ -36,11 +37,12 @@
                 <p style="text-align:center;">{{ ('Are you sure?') }}</p>
             </confirm>
         </div>
+        <loading :show="loading" text="loading" ></loading>
     </div>
 </template>
 <script>
 import Vue from "vue";
-import {XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,ToastPlugin,Confirm} from "vux";
+import {XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,ToastPlugin,Confirm,Loading} from "vux";
 Vue.use(ToastPlugin);
 import {mapMutations} from "vuex"
 import axios from 'axios';
@@ -52,10 +54,11 @@ export default {
             sexlist:['男','女'],
             compressData:'',//压缩处理后的图片数据           
             userBaseInfo:{},
+            loading:false,
         }
     },
     components:{
-        XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,Confirm
+        XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,Confirm,Loading
     },
     mounted(){
         //发请求拿数据
@@ -76,6 +79,7 @@ export default {
 			})
 		},
         getFile(event) {
+            this.loading=true;
             var self=this;
             // self.userBaseInfo.file = event.target.files[0];
             console.log(event.target.files[0]);
@@ -87,6 +91,7 @@ export default {
                 fr.readAsDataURL(event.target.files[0]);
                 fr.onload=function(){
                     self.userBaseInfo.avatar=fr.result;
+                    self.loading=false;
                     self.compress();                    
                 }    
             }else{
@@ -185,11 +190,13 @@ export default {
     color: #000;
     // background: #fff;
     .uf_avatar{
-        width: 100%;
+        // width: 100%;
+        margin-left: 5rem;
         height: 4rem;
         text-align: center;
         // background: #fff;
-        padding: 0.5rem 0 0 0;
+        // padding: 0.5rem 0 0 0;
+        float: left;
                 
         img{
             vertical-align: middle;
@@ -206,7 +213,10 @@ export default {
     }
     label{
             display: inline-block;
-            width: 100%;
+            // width: 100%;
+            margin-left: 2rem;
+            line-height: 4rem;
+            float: left;
             text-align: center; 
             font-size: 1rem;  
             span{

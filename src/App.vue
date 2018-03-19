@@ -22,8 +22,8 @@ export default {
 	name: "App",
 	components: {
     	Popup,
-			Drawer,
-			UserCenter
+		Drawer,
+		UserCenter
   	},
   	data() {
     	return {
@@ -48,6 +48,8 @@ export default {
 		checkLogin(){
 			if(window.localStorage.getItem('userid') && window.localStorage.getItem('password')){
 				this.SET_LOGINSTATUS(true);
+			}else{
+				// this.userBaseInfo.avatar="http://39.108.233.223:9999/images/avatarimg/touxiang.jpeg"
 			}
 		},
 		getUserInfo(){
@@ -70,6 +72,8 @@ export default {
 			console.log("dengluzhuangtai:"+this.loginstatus);
 			if(this.loginstatus){
 				this.getUserInfo();
+			}else{
+				this.userBaseInfo={};
 			}
 		}
 	}

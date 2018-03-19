@@ -17,7 +17,7 @@
                 <dl>
                     <dd><span class="iconfont icon-msnui-sms-bubble"></span>我的消息</dd>
                     <dd @click="goUserInfo"><span class="iconfont icon-gerenxinxi1" ></span>个人信息</dd>
-                    <dd><span class="iconfont icon-shoucangyingyuan"></span>我的收藏</dd>
+                    <dd @click="goUserCollect"><span class="iconfont icon-shoucangyingyuan"></span>我的收藏</dd>
                     <dd><span class="iconfont icon-icon--"></span>我的作品</dd>
                     <dd><span class="iconfont icon-jiluliebiao"></span>播放记录</dd>
                     <dd><span class="iconfont icon-guanyuwomen"></span>关于作者</dd>
@@ -91,6 +91,10 @@ export default {
         goUserInfo(){
             this.$emit("showUserModal");
             this.$router.push({path:'/userinfo'});
+        },
+        goUserCollect(){
+            this.$emit("showUserModal");
+            this.$router.push({path:'/userCollect'});
         }
     }
 }

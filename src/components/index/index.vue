@@ -3,7 +3,7 @@
 		<x-header :left-options="{showBack: false}">
 			<div class="avatar" @click="showUser">
 				<!-- <x-icon type="navicon" size="35" style="fill:#fff;position:relative;top:-8px;left:-3px" @click="showUser"></x-icon> -->
-				<img :src="userBaseInfo.avatar" alt="">	
+				<img :src="avatar" alt="">	
 			</div>
 			<div class="logo"><img src="../../assets/image/logo.png" alt=""></div>
 		</x-header>
@@ -19,6 +19,7 @@ export default {
 	data(){
 		return {
 			// loginstatus:false,
+			// avatar:this.userBaseInfo.avatar?this.userBaseInfo.avatar:'http://39.108.233.223:9999/images/avatarimg/touxiang.jpeg'
 		}
 	},
 	props:{
@@ -30,6 +31,9 @@ export default {
 	computed:{
 		loginstatus(){
 			return this.$store.state.loginstatus;
+		},
+		avatar(){
+			return this.userBaseInfo.avatar?this.userBaseInfo.avatar:'http://39.108.233.223:9999/images/avatarimg/touxiang.jpeg'
 		}
 	},
 	components:{
