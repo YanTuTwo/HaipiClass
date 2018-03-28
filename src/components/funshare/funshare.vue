@@ -5,7 +5,7 @@
 			<div class="contentlist">
 				<div class="videoitem">
                     <div class="videowrapper">
-                        <video width="100%" controls src="http://192.168.1.14:3000/video/123.mp4" poster="http://open-image.nosdn.127.net/image/snapshot_movie/2013/3/V/M/M8OBKKBVM.jpg" ref='video' ></video>
+                        <video width="100%" controls src="http://193.112.95.221:9999/video/IMG_0199.mp4" poster="http://open-image.nosdn.127.net/image/snapshot_movie/2013/3/V/M/M8OBKKBVM.jpg" ref='video' ></video>
                     </div>
                     <div class="author">
                         <img src="http://192.168.1.14:3000/images/avatarimg/admin.png" alt=""><span>hahahha</span>
@@ -30,7 +30,7 @@
                 </div>
                 <div class="videoitem">
                     <div class="videowrapper">
-                        <video width="100%" controls src="http://192.168.1.14:3000/video/111.mp4" poster="http://open-image.nosdn.127.net/image/snapshot_movie/2013/3/V/M/M8OBKKBVM.jpg" ref='video' ></video>
+                        <video width="100%" controls src="http://193.112.95.221:9999/video/IMG_0203.mp4" poster="http://open-image.nosdn.127.net/image/snapshot_movie/2013/3/V/M/M8OBKKBVM.jpg" ref='video' ></video>
                     </div>
                     <div class="author">
                         <img src="http://192.168.1.14:3000/images/avatarimg/admin.png" alt=""><span>hahahha</span>
