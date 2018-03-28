@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import Index from '@/components/index/index'
 import Recommend from "@/components/recommend/recommend"
 import Ted from "@/components/ted/ted"
@@ -11,6 +12,9 @@ import Funshare from "@/components/funshare/funshare"
 import Login from "@/components/login/login"
 import Userinfo from "@/components/userinfo/userinfo"
 import UserCollect from "@/components/userCollect/userCollect"
+import PlayHistory from "@/components/playHistory/playHistory"
+import MyNotice from "@/components/myNotice/myNotice"
+import UpVideo from "@/components/upVideo/upVideo"
 Vue.use(Router)
 
 export default new Router({
@@ -51,6 +55,21 @@ export default new Router({
       path:'/userCollect',
       name:'userCollect',
       component:UserCollect
+    },
+    {
+      path:'/playHistory',
+      name:'playHistory',
+      component:PlayHistory
+    },
+    {
+      path:'/myNotice',
+      name:'myNotice',
+      component:MyNotice
+    },
+    {
+      path:'/upVideo',
+      name:'upVideo',
+      component:UpVideo
     }
   ]
 })

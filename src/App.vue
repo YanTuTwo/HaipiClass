@@ -82,7 +82,7 @@ export default {
 
 <style>
 @import "./assets/styles/common.css";
-@import url("http://at.alicdn.com/t/font_487716_pz7cs2s2zhsbrzfr.css");
+@import url("http://at.alicdn.com/t/font_487716_0g7erj20ydu9dx6r.css");
 body {
   	background-color: #fbf9fe;
 }

@@ -15,11 +15,12 @@
         <group :title="('咚咚咙咚呛咚呛。')">
              <div class="funclist">
                 <dl>
-                    <dd><span class="iconfont icon-msnui-sms-bubble"></span>我的消息</dd>
+                    <dd @click="goMyNotice"><span class="iconfont icon-msnui-sms-bubble"></span>我的消息</dd>
                     <dd @click="goUserInfo"><span class="iconfont icon-gerenxinxi1" ></span>个人信息</dd>
                     <dd @click="goUserCollect"><span class="iconfont icon-shoucangyingyuan"></span>我的收藏</dd>
+                    <dd @click="goUpVideo"><span class="iconfont icon-icon--"></span>上传作品</dd>
                     <dd><span class="iconfont icon-icon--"></span>我的作品</dd>
-                    <dd><span class="iconfont icon-jiluliebiao"></span>播放记录</dd>
+                    <dd @click="goPlayHistory"><span class="iconfont icon-jiluliebiao"></span>播放记录</dd>
                     <dd><span class="iconfont icon-guanyuwomen"></span>关于作者</dd>
                     <dd @click="onExit"><span class="iconfont icon-zhuxiaoguanji"></span>注销</dd>
                 </dl>
@@ -95,6 +96,18 @@ export default {
         goUserCollect(){
             this.$emit("showUserModal");
             this.$router.push({path:'/userCollect'});
+        },
+        goPlayHistory(){
+            this.$emit("showUserModal");
+            this.$router.push({path:'/playHistory'});
+        },
+        goMyNotice(){
+            this.$emit("showUserModal");
+            this.$router.push({path:'/myNotice'});
+        },
+        goUpVideo(){
+            this.$emit("showUserModal");
+            this.$router.push({path:'/upVideo'});
         }
     }
 }

@@ -5,7 +5,7 @@
 		:pullupConfig="{ loadingContent: '<load-more></load-more>',upContent: '加载中...',height:50,content: '上拉加载更多',downContent: '释放加载更多',}">
 			<div class="scrollerwrapper">
 				<div class="videowrapper">
-					<video width="100%" controls="true" :src="videolist.mp4HdUrl || videolist.mp4SdUrl" :poster="videolist.imgPath" ref='video' ></video>
+					<video width="100%" controls="true" :src="videolist.mp4HdUrl || videolist.mp4SdUrl" :poster="videolist.imgPath" ref='video' @play="startplay"></video>
 				</div>
 				<p class="viewcount">播放：{{moviedata.hits | ConvertPeople}}次
 					<span class="iconfont icon-fenxiang text-nor"></span>
@@ -71,7 +71,6 @@ import {mapGetters,mapMutations} from "vuex"
 import listview from '@/common//listview/listview'
 import axios from 'axios'
 export default {
-	props:['userBaseInfo'],
     data(){
         return {
             moviedata:[],
@@ -82,7 +81,7 @@ export default {
 			hotlistflag:'three',
 			recommenstart:0,
 			recommenlen:5,
-			collected:true,
+			collected:false,
 			showbtn:false,
 			isEmptyhotlist:false,
 			isVideoCollection:false,//是否为合集
@@ -115,12 +114,30 @@ export default {
 		this.initDetail();
     },
     methods:{
+		//判断是否收藏
+		isCollected(){
+			this.collected=false;
+			let userid=window.localStorage.getItem('userid');
+			axios.get('/api/users/getCollectList?&userid='+userid+'&status=0').then((res)=>{
+				if(res.data.code){
+					console.log("1");
+					for(var i=0;i<res.data.data.length;i++){
+						if(res.data.data[i].plid==this.plid && res.data.data[i].contentid==this.contentid){
+							this.collected=true;
+						}
+					}
+				}else{
+					console.log("收藏获取失败");
+				}
+            })
+		},
 		//初始化数据，获取路由传来的参数
 		initDetail(){
 			this.loading=true;
 			this.plid=this.$route.query.plid;
 			this.contentid=this.$route.query.contentid;
-			this._getmoviedata();		
+			this._getmoviedata();	
+			this.isCollected();	
 		},
 		//获取当前id的视频信息
         _getmoviedata(){
@@ -184,24 +201,60 @@ export default {
 		    this._getmorerecList();			    
         },
 		onCollect(){
-			console.log("1");
+			// console.log("1");
 			if(this.loginstatus){
 				//发收藏请求
-				axios.post('/api/users/addCollect',{
-					plid :this.plid,
-					contentid:this.contentid,
-				}).then((res)=>{
-					if(res.code){
-						console.log(res.data);
-					}else{
-						this.$vux.toast.text('收藏失败', 'middle');
-					}
-					
-				})
-				this.collected=!this.collected;
+				if(this.collected){
+					this.deleteCollect();
+				}else{
+					this.addCollect();
+				}				
 			}else{
 				this.$vux.toast.text('登录后才能收藏喔！', 'middle');
 			}
+		},
+		deleteCollect(){
+			axios.post('/api/users/deleteCollect',{
+				userid:window.localStorage.getItem('userid'),
+				plid :this.plid,
+				contentid:this.contentid,
+			}).then((res)=>{
+				if(res.data.code){
+					this.collected=!this.collected;
+					// console.log(res.data);
+					this.$vux.toast.text('取消收藏成功', 'middle');
+				}else{
+					this.$vux.toast.text('取消收藏失败', 'middle');
+				}					
+			})
+		},
+		addCollect(){
+			let tit='';
+			if(this.isVideoCollection){
+				tit=this.moviedata.tit+"之"+this.videolist.title
+			}else{
+				tit=this.moviedata.tit
+			}			
+			axios.post('/api/users/addCollect',{
+				userid:window.localStorage.getItem('userid'),
+				plid :this.plid,
+				contentid:this.contentid,
+				img:this.videolist.imgPath,
+                tit:tit,
+                desc:this.moviedata.description,
+                director:this.moviedata.director,
+                viewcount:this.moviedata.hits,
+			}).then((res)=>{
+				if(res.data.code){
+					this.collected=!this.collected;
+					// console.log(res.data);
+					this.$vux.toast.text('收藏成功', 'middle');
+				}else{
+					this.$vux.toast.text('收藏失败', 'middle');
+				}
+					
+			})
+			
 		},
 		lookmore(){
 			this.hotlistflag='all';
@@ -251,16 +304,36 @@ export default {
 				this.currentVideoList=arr.slice(currentindex-1,currentindex+2);
 				this.currentVideoIndex=1;
 			}			
+		},
+		startplay(){		
+			let date=new Date();	
+			axios.post('/api/users/addhistory',{
+				userid:window.localStorage.getItem('userid'),
+				plid :this.plid,
+				contentid:this.contentid,
+				tit:this.moviedata.tit,
+				director:this.moviedata.director,
+				playtime:date.toLocaleString()
+			}).then((res)=>{
+				if(res.data.code){
+					console.log("开始播放，记录");
+				}else{
+					console.log("记录失败");
+				}					
+			})
 		}
     },
 	watch: {
 		'$route' (to, from) {
-		this.hotlistflag="three";
-		this.hotlist=[];
-		this.initDetail();				
-		this.$refs.scroller.reset({top:0})
-    }
-}
+			this.hotlistflag="three";
+			this.hotlist=[];
+			this.initDetail();				
+			this.$refs.scroller.reset({top:0})
+		},
+		userInfo(){
+			// console.log(this.userInfo);
+		}
+	}
 }
 </script>
 <style lang="scss" scoped>
