@@ -33,7 +33,7 @@ export default {
 			return this.$store.state.loginstatus;
 		},
 		avatar(){
-			return this.userBaseInfo.avatar?this.userBaseInfo.avatar:'http://39.108.233.223:9999/images/avatarimg/touxiang.jpeg'
+			return this.userBaseInfo.avatar?this.userBaseInfo.avatar:'http://193.112.95.221:9999/images/avatarimg/touxiang.jpeg'
 		}
 	},
 	components:{
