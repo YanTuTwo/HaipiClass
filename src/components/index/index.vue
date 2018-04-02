@@ -18,6 +18,7 @@ import axios from "axios";
 export default {
 	data(){
 		return {
+			// userInfo:this.userBaseInfo,
 			// loginstatus:false,
 			// avatar:this.userBaseInfo.avatar?this.userBaseInfo.avatar:'http://39.108.233.223:9999/images/avatarimg/touxiang.jpeg'
 		}

@@ -15,6 +15,8 @@ import UserCollect from "@/components/userCollect/userCollect"
 import PlayHistory from "@/components/playHistory/playHistory"
 import MyNotice from "@/components/myNotice/myNotice"
 import UpVideo from "@/components/upVideo/upVideo"
+import VideoDetail from "@/components/videoDetail/videoDetail"
+import MyVideo from "@/components/myVideo/myVideo"
 Vue.use(Router)
 
 export default new Router({
@@ -70,6 +72,17 @@ export default new Router({
       path:'/upVideo',
       name:'upVideo',
       component:UpVideo
+    },
+    {
+      path:'/videoDetail',
+      name:'videoDetail',
+      component:VideoDetail
+    },
+    {
+      path:'/myVideo',
+      name:'myVideo',
+      component:MyVideo
     }
+
   ]
 })

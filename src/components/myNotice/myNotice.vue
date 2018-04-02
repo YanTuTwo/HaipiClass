@@ -1,19 +1,62 @@
 <template>
     <div>
         <x-header :left-options="{backText: ''}">我的消息<a slot="right" @click="clearhistory" v-if="!ishistoryListEmpty">清空</a></x-header>
-        <scroller lock-x :scrollbar-y=false height="-46" ref='scroller'  @on-pullup-loading="pullup" @on-scroll='onscroll'>
-            <div class="history">
-                <div class="history-item" v-for="item in noticeList" @click="goPlayDetail(item)">
-                    <p class="tit">{{item.tit}}</p>
-                    <p class="author text-grey">{{item.director}} | <span>{{item.playtime}}</span></p>
-                </div>
+        <div class="buttonTab">
+            <button-tab v-model="Tabindex">
+                <button-tab-item @on-item-click="onChangeTab">动态</button-tab-item>
+                <button-tab-item @on-item-click="onChangeTab">评论</button-tab-item>
+                <button-tab-item @on-item-click="onChangeTab">通知</button-tab-item>
+            </button-tab>
+        </div>   
+        <div ref="scrollerwrapper">
+        <scroller lock-x :scrollbar-y=false :height="scrolltop" ref='scroller'  @on-pullup-loading="pullup" @on-scroll='onscroll'>
+            <div class="noticeWrap">
+                <ul>
+                    <li>
+                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
+                        <p class="avatar text-primary">高冷逗比女神经 <span class="text-grey">赞了你的评论</span></p>
+                        <p class="commentcon">我擦，我上着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
+                        <span class="commenttime">2018/2/2</span>
+                    </li>
+                    <li>
+                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
+                        <p class="avatar text-primary">高冷逗神经 <span class="text-grey">赞了你的评论</span></p>
+                        <p class="commentcon">我擦，我上着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
+                        <span class="commenttime">2018/2/2</span>
+                    </li>
+                    <li>
+                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
+                        <p class="avatar text-primary">高冷经 <span class="text-grey">赞了你的评论</span></p>
+                        <p class="commentcon">我擦，我上着班呢，，以为外放了。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
+                        <span class="commenttime">2018/2/2</span>
+                    </li>
+                    <li>
+                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
+                        <p class="avatar text-primary">高冷 <span class="text-grey">赞了你的评论</span></p>
+                        <p class="commentcon">我擦，我上着班呢，，以为外放以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
+                        <span class="commenttime">2018/2/2</span>
+                    </li>
+                    <li>
+                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
+                        <p class="avatar text-primary">高冷经 <span class="text-grey">赞了你的评论</span></p>
+                        <p class="commentcon">我擦，我上着班呢，，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
+                        <span class="commenttime">2018/2/2</span>
+                    </li>
+                    <li>
+                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
+                        <p class="avatar text-primary">高冷女神经 <span class="text-grey">赞了你的评论</span></p>
+                        <p class="commentcon">我擦，了。。为外放了。。。</p>
+                        <span class="commenttime">2018/2/2</span>
+                    </li>
+                </ul>
             </div>
         </scroller>
+        </div>
     </div>
 </template>
 <script>
 import Vue from "vue"
-import {XHeader,Scroller,ConfirmPlugin,ToastPlugin} from 'vux'
+import {XHeader,Scroller,ConfirmPlugin,ToastPlugin,ButtonTab,ButtonTabItem} from 'vux'
 import axios from "axios"
 Vue.use(ConfirmPlugin)
 Vue.use(ToastPlugin);
@@ -29,16 +72,26 @@ export default {
                 }
             ],
             ishistoryListEmpty:false,
+            Tabindex:0,
+            scrolltop:'',
         }
     },
     components:{
         XHeader,
         Scroller,
+        ButtonTab,
+        ButtonTabItem
     },
     mounted(){
         this.getHistory();
+        this.initScroll();
     },
     methods:{
+        initScroll(){
+			let scrolltop=this.$refs.scrollerwrapper.offsetTop;
+			this.scrolltop=(document.documentElement.clientHeight-scrolltop)+'px';
+			console.log(scrolltop);
+        },
         pullup(){
 
         },
@@ -90,20 +143,51 @@ export default {
                 this.$router.push({ path: '/playDetail', query: { plid: plid,contentid:contentid}})
             }          
            
+        },
+        onChangeTab(){
+
         }
     }
 }
 </script>
 <style lang="scss" scoped>
-.history{
+.buttonTab{
+    padding: 1rem;
+}
+.noticeWrap{
     background: #fff;
-    .history-item{
-        // height: 4rem;
-        width: 100%;
+    font-size: .8rem;
+    li{
+        position: relative;
         padding: .5rem 1rem;
-        border-bottom: 1px solid #eee;
-        p{
-            line-height: 1.5rem;
+        padding-left: 3rem;
+        width: 100%;
+        height: 3.6rem;
+        border-bottom: 1px solid #ccc;    
+        line-height: 1.3rem;   
+        .avatarimg{
+            position: absolute;
+            left: .6rem;
+            top: .6rem;
+            width: 2rem;
+            height: 2rem;
+            img{
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+            }
+        }
+        .commenttime{
+            position: absolute;
+            top: .3rem;
+            right: .3rem;
+            color: #ccc;
+        }
+        .commentcon{
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
+            color: #333;
         }
     }
 }

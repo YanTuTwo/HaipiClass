@@ -1,114 +1,108 @@
 <template>
-    <div class="funshare" ref='funshare'>
-        <scroller :height='scrolltop' lock-x :scrollbar-y=false ref="scroller" use-pullup @on-pullup-loading="pullup" @on-scroll='onscroll' :pullup-config="{ loadingContent: 'Loading...',height:50,downContent: '放手刷新啦!',
-  upContent: '上拉加载更多',content:'努力加载中····'}">
-			<div class="contentlist">
-				<div class="videoitem">
-                    <div class="videowrapper">
-                        <video width="100%" controls src="http://193.112.95.221:9999/video/IMG_0199.mp4" poster="http://open-image.nosdn.127.net/image/snapshot_movie/2013/3/V/M/M8OBKKBVM.jpg" ref='video' ></video>
-                    </div>
-                    <div class="author">
-                        <img src="http://192.168.1.14:3000/images/avatarimg/admin.png" alt=""><span>hahahha</span>
-                    </div>
-                    <div class="video-detail">
-                        <div class="video-tit">世界上做信服的是世界上做信服的是世界上做信服的是世界上做信服的是世界上做信服的是世界上做信服的是世界上做信服的是</div>
-                        <div class="video-about">
-                            <div class="video-zan">
-                                <span class="iconfont icon-dianzan"></span>
-                                <p>100</p>    
-                            </div>
-                            <div class="video-col">
-                                <span class="iconfont icon-shoucangjia1"></span>
-                                <p>100</p> 
-                            </div>
-                            <div class="video-comment">
-                                <span class="iconfont icon-pinglun"></span>
-                                <p>100</p> 
+    <div class="funshare">
+        <div class="scrollwrap"  ref='funshare'>
+            <scroller ref="scroller" lock-x :scrollbar-y=false 
+                :use-pulldown=true :height='scrolltop'
+                @on-pulldown-loading='success' 
+                @on-scroll-bottom='scrollbottom'
+                :pulldownConfig="{ loadingContent: '<div></div>',upContent: '拉什么拉，快放手！',height:50,content: '下拉刷新',downContent: '下拉可刷新',}"
+                @on-scroll='onscroll'>			
+                <div class="video-list-wrap">				
+                    <div class="videoitem" v-for="(item,index) in videoList" :key="item._id">
+                        <div class="videowrapper"> 
+                            <video width="100%" controls  :src="item.videoUrl"  ref='video' ></video>
+                        </div>
+                        <div class="author">
+                            <img :src="item.avatar" alt=""><span>{{item.nickname}}</span>
+                        </div>
+                        <div class="video-detail">
+                            <div class="video-tit" @click="goVideoDetail(item.videoid)">{{item.tit}}</div>
+                            <div class="video-about">
+                                <div class="video-zan">
+                                    <span class="iconfont icon-dianzan"></span>
+                                    <p>{{item.vote}}</p>    
+                                </div>
+                                <div class="video-col">
+                                    <span class="iconfont icon-shoucangjia1"></span>
+                                    <p>{{item.coll}}</p> 
+                                </div>
+                                <div class="video-comment">
+                                    <span class="iconfont icon-pinglun"></span>
+                                    <p>{{item.Comment | arrlength}}</p> 
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="videoitem">
-                    <div class="videowrapper">
-                        <video width="100%" controls src="http://193.112.95.221:9999/video/IMG_0203.mp4" poster="http://open-image.nosdn.127.net/image/snapshot_movie/2013/3/V/M/M8OBKKBVM.jpg" ref='video' ></video>
-                    </div>
-                    <div class="author">
-                        <img src="http://192.168.1.14:3000/images/avatarimg/admin.png" alt=""><span>hahahha</span>
-                    </div>
-                    <div class="video-detail">
-                        <div class="video-tit">世界上做信服的是</div>
-                        <div class="video-about">
-                            <div class="video-zan">
-                                <span class="iconfont icon-dianzan"></span>
-                                <p>100</p>    
-                            </div>
-                            <div class="video-col">
-                                <span class="iconfont icon-shoucangjia1"></span>
-                                <p>100</p> 
-                            </div>
-                            <div class="video-comment">
-                                <span class="iconfont icon-pinglun"></span>
-                                <p>100</p> 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="videoitem">
-                    <div class="videowrapper">
-                        <video width="100%"  src="http://192.168.1.14:3000/video/123.mp4" poster="http://open-image.nosdn.127.net/image/snapshot_movie/2013/3/V/M/M8OBKKBVM.jpg" ref='video' ></video>
-                    </div>
-                    <div class="author">
-                        <img src="http://192.168.1.14:3000/images/avatarimg/admin.png" alt=""><span>hahahha</span>
-                    </div>
-                    <div class="video-detail">
-                        <div class="video-tit">世界上做信服的是</div>
-                        <div class="video-about">
-                            <div class="video-zan">
-                                <span class="iconfont icon-dianzan"></span>
-                                <p>100</p>    
-                            </div>
-                            <div class="video-col">
-                                <span class="iconfont icon-shoucangjia1"></span>
-                                <p>100</p> 
-                            </div>
-                            <div class="video-comment">
-                                <span class="iconfont icon-pinglun"></span>
-                                <p>100</p> 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-			</div>
-		</scroller>   
+            </scroller>
+        </div> 
+        <loading :show="loading" text="loading" ></loading>
     </div>
 </template>
 <script>
 import { Scroller, Loading } from 'vux'
+import axios from "axios"
 export default {
     data(){
         return{
             scrolltop:'',
+            videoList:[],
+            loading:false,
+            playtStatus:true,
+            commentList:[],
         }
     },
     components:{
         Scroller,
         Loading
     },
+    computed:{
+
+    },
+    created(){
+        this.getVideoList();
+    },
     mounted(){
-        this.initScroll();
+        this.initScroll();       
     },
     methods:{
         initScroll(){
             let scrolltop = this.$refs.funshare.offsetTop;
 			this.scrolltop = (document.documentElement.clientHeight - scrolltop) + 'px';
-			console.log(this.$refs.funshare)
+			console.log(this.scrolltop)
+        },
+        getVideoList(){
+            this.loading=true;
+            axios.get('/api/upload/videoList',{}).then((res)=>{
+                console.log(res.data);
+                if(res.data.code){
+                    // this.classlist.concat(res.data.data)
+
+                    this.videoList=res.data.data.reverse(); 
+                    this.loading=false;
+                }
+            })
         },
         pullup(){
 
         },
         onscroll(){
 
-        }
+        },
+        //下拉刷新重新获取数据
+		success(){
+			setTimeout(()=>{
+                this.videoList=[];
+				this.getVideoList();
+				this.$refs.scroller.reset({top:0})
+			},1000)
+        },
+        scrollbottom(){
+            
+        },
+        goVideoDetail(id){
+            this.$router.push({ path: '/videoDetail', query: {videoid:id}})
+        },
     }
 }
 </script>
@@ -116,7 +110,8 @@ export default {
 .videoitem{
     width: 100%;
     position: relative;
-    // margin-bottom: 1rem;
+    overflow: hidden;
+    height: 18.2rem;
     background: #e5e5e5;
     video{
         max-height: 14rem;
@@ -147,6 +142,7 @@ export default {
         padding: .9rem 0;
         .video-tit{
             width: 60%; 
+            height: 100%;
             float: left; 
             line-height: 1.2rem;
             display: -webkit-box;

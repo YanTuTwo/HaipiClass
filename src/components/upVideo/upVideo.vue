@@ -37,6 +37,12 @@ export default {
             cos:'',
         }
     },
+    props:{
+		userBaseInfo:{
+			type:Object,
+			default:{}
+		}
+	},
     components:{
         XHeader,XProgress,XButton,Group,XTextarea
     },
@@ -53,6 +59,8 @@ export default {
             axios.post('/api/upload/upvideo',{
                 videoid:videoid,
                 userid:window.localStorage.getItem('userid'),
+                avatar:this.userBaseInfo.avatar,
+                nickname:this.userBaseInfo.nickname,
                 tit:this.videoTit,
                 desc:this.videoDesc,
                 uptime:date.getTime(),
@@ -69,6 +77,10 @@ export default {
             })
         },
         putobject(){
+            if(this.videoTit=='' || this.videoDesc==''){
+                this.$vux.toast.text('请填写视频相关信息', 'middle');
+                return ;
+            }
             if(this.file=='' || this.file.type.slice(0,5)!='video'){
                 this.$vux.toast.text('请选择视频文件', 'middle');
                 return ;

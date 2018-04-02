@@ -259,3 +259,6 @@ input::-webkit-input-placeholder {
 .no-touch .scroll-y:hover > *{margin-right: -10px;padding-right: 15px}
 
 
+[v-cloak] {
+  display: none;
+}

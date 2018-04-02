@@ -15,6 +15,13 @@ Vue.use(VueLazyLoad,{
 	loading:require('@/assets/image/lazyloading.gif')
 })
 
+//计算数组长度
+Vue.filter('arrlength',function(value){
+	if (!value) return 0;
+	else {
+		return value.length;
+	}
+})
 
 //将毫秒数转换成年月日
 Vue.filter('ConvertTime', function (value) {

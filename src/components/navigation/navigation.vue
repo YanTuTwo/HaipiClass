@@ -74,8 +74,8 @@
 				      	this.$refs.scroller.reset({left: left})
 				   })
 				}
-				if(index==obj.length-2){
-					let left=(index-2)*obj[index].offsetWidth;
+				if(index==obj.length-2 || index==obj.length-1){
+					let left=2*obj[index].offsetWidth;
 					// console.log(left);
 					this.$nextTick(() => {
 				      	this.$refs.scroller.reset({left: left})
