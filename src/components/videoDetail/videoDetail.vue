@@ -10,7 +10,7 @@
 				<div class="scrollerwrapper">				
 					<div class="movieinfo">
 						<div class="author">
-							<img :src="videodata.avatar" alt=""><span>{{videodata.nickname}}</span>
+							<img :src="userInfo.avatar" alt=""><span>{{userInfo.nickname}}</span>
 						</div>
 						<p class="movietit">{{videodata.tit}}</p>
 						<p class="uptime text-grey">上传时间：{{videodata.uptime | ConvertTime}}</p>
@@ -60,7 +60,8 @@ export default {
     data(){
         return {
 			scrolltop:'',
-            videodata:{},
+			videodata:{},
+			userInfo:{},
 			recommendList:[],
 			videolist:[],
 			loading:false,
@@ -155,8 +156,9 @@ export default {
         _getvideodata(){
 			axios.get('/api/upload/videoDetail?videoid='+this.videoid,{}).then((res)=>{
 				console.log(res.data);
-				this.videodata=res.data.data;	
-				this.commentNum=res.data.data.Comment.length;
+				this.videodata=res.data.data.videodata;	
+				this.commentNum=res.data.data.videodata.Comment.length;
+				this.userInfo=res.data.data.userdata;
 				this.loading=false;
 			})
         },
