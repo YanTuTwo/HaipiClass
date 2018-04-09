@@ -137,7 +137,9 @@ export default {
 			this.plid=this.$route.query.plid;
 			this.contentid=this.$route.query.contentid;
 			this._getmoviedata();	
-			this.isCollected();	
+			if(this.loginstatus){
+				this.isCollected();	
+			}			
 		},
 		//获取当前id的视频信息
         _getmoviedata(){

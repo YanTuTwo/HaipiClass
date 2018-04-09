@@ -59,8 +59,8 @@ export default {
             axios.post('/api/upload/upvideo',{
                 videoid:videoid,
                 userid:window.localStorage.getItem('userid'),
-                avatar:this.userBaseInfo.avatar,
-                nickname:this.userBaseInfo.nickname,
+                // avatar:this.userBaseInfo.avatar,
+                // nickname:this.userBaseInfo.nickname,
                 tit:this.videoTit,
                 desc:this.videoDesc,
                 uptime:date.getTime(),

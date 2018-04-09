@@ -13,7 +13,7 @@
                             <video width="100%" controls  :src="item.videoUrl"  ref='video' ></video>
                         </div>
                         <div class="author">
-                            <img :src="item.avatar" alt=""><span>{{item.nickname}}</span>
+                            <img :src="item.userinfo.avatar" alt=""><span>{{item.userinfo.nickname}}</span>
                         </div>
                         <div class="video-detail">
                             <div class="video-tit" @click="goVideoDetail(item.videoid)">{{item.tit}}</div>
@@ -47,6 +47,7 @@ export default {
         return{
             scrolltop:'',
             videoList:[],
+            userlist:[],
             loading:false,
             playtStatus:true,
             commentList:[],
@@ -73,12 +74,19 @@ export default {
         },
         getVideoList(){
             this.loading=true;
-            axios.get('/api/upload/videoList',{}).then((res)=>{
-                console.log(res.data);
+            axios.get('/api/upload/videoList?pending=1',{}).then((res)=>{
+                // console.log(res.data);
                 if(res.data.code){
                     // this.classlist.concat(res.data.data)
-
-                    this.videoList=res.data.data.reverse(); 
+                    this.userlist=res.data.userinfo.reverse();
+                    this.videoList=res.data.videolist.reverse();
+                    for(var i=0;i<this.videoList.length;i++){
+                        for(var j=0;j<this.userlist.length;j++){
+                            if(this.videoList[i].userid==this.userlist[j].userid){
+                                this.videoList[i].userinfo=this.userlist[j];
+                            }
+                        }                       
+                    } 
                     this.loading=false;
                 }
             })

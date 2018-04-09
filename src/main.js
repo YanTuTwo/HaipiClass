@@ -29,7 +29,7 @@ Vue.filter('ConvertTime', function (value) {
   let date=new Date(value);
 	let str="";
 	let year = date.getFullYear();
-	let month= date.getMonth();
+	let month= date.getMonth()+1;
 	let day = date.getDate();
 	str=year+'/'+month+"/"+day;
 	return str
