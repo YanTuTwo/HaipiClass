@@ -25,13 +25,13 @@
                     </section>   
                     <section  class="collectItem" v-for="(funItem,index) in CollectList" v-if="Tabindex==1" @click="onHpCollect(index)">
                         <div class="collectItem_img">
-                            <img :src="funItem.img" alt="" />
+                            <video :src="funItem.videoUrl"></video>
                         </div>
                         <div class="collectItem_info">
                             <div class="collectItem_tit"><span>{{funItem.tit}}</span></div>
                             <div class="collectItem_desc">
-                                <span class="collectItem_length">{{funItem.quantity}}, </span>
-                                <span class="collectItem_playtimes">{{funItem.viewcount}}人观看</span>
+                                <span class="collectItem_length">简介：{{funItem.desc}}, </span>
+                                <!-- <span class="collectItem_playtimes">{{funItem.coll}}人收藏</span> -->
                             </div>
                         </div>
                     </section> 
@@ -100,8 +100,8 @@ export default {
             this.$router.push({ path: '/playDetail', query: { plid: plid,contentid:contentid}})
         },
         onHpCollect(index){
-            let id=CollectList[index].id;
-            this.$router.push({ path: '/hpplayDetail', query: { id: id}})
+            let id=this.CollectList[index].videoid;
+            this.$router.push({ path: '/videoDetail', query: { videoid: id}})
         }
 
     }
@@ -126,6 +126,10 @@ export default {
 		height: 3rem;
 		margin-right: 0.8rem;
         img{
+            width: 100%;
+            height: 100%;
+        }
+        video{
             width: 100%;
             height: 100%;
         }

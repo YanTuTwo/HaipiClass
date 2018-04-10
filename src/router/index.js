@@ -17,6 +17,7 @@ import MyNotice from "@/components/myNotice/myNotice"
 import UpVideo from "@/components/upVideo/upVideo"
 import VideoDetail from "@/components/videoDetail/videoDetail"
 import MyVideo from "@/components/myVideo/myVideo"
+import ChangePassword from "@/components/changepassword/changepassword"
 Vue.use(Router)
 
 export default new Router({
@@ -82,6 +83,11 @@ export default new Router({
       path:'/myVideo',
       name:'myVideo',
       component:MyVideo
+    },
+    {
+      path:'/changepassword',
+      name:'changepassword',
+      component:ChangePassword
     }
 
   ]

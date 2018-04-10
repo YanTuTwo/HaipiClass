@@ -17,8 +17,8 @@
 						<p class="movie-con moviedescription"><span>视频简介：</span>{{videodata.desc}}</p>
 					</div>
 					<div class="action">
-						<div @click="onColl" :class="{active : isVote}"><span class="iconfont icon-dianzan ft-24" ></span><p>{{videodata.vote}}</p>  </div>
-						<div @click="onVote" :class="{active : isColl}"><span class="iconfont icon-shoucangjia1 ft-24"></span><p>{{videodata.coll}}</p>  </div>
+						<div @click="onVote" :class="{active : isVote}"><span class="iconfont icon-dianzan ft-24" ></span><p>{{videodata.vote}}</p>  </div>
+						<div @click="onColl" :class="{active : isColl}"><span class="iconfont icon-shoucangjia1 ft-24"></span><p>{{videodata.coll}}</p>  </div>
 						<div @click="goComment"><span class="iconfont icon-pinglun ft-24"></span><p>{{commentNum}}</p>  </div>
 					</div>
 					<h3 class="hotcomments-tit">热门评论</h3>
@@ -65,7 +65,6 @@ export default {
 			recommendList:[],
 			videolist:[],
 			loading:false,
-			collected:false,
 			showbtn:false,
 			commentNum:0,
 			hotlist:[
@@ -91,8 +90,8 @@ export default {
 			],
 			isEmptyhotlist:false,
 			commentCentent:'',
-			isColl:true,
-			isVote:true,
+			isColl:false,
+			isVote:false,
         }
     },
     components:{
@@ -130,27 +129,28 @@ export default {
         },
 		//判断是否收藏
 		isCollected(){
-			this.collected=false;
-			let userid=window.localStorage.getItem('userid');
-			axios.get('/api/users/getCollectList?&userid='+userid+'&status=0').then((res)=>{
-				if(res.data.code){
-					console.log("1");
-					for(var i=0;i<res.data.data.length;i++){
-						if(res.data.data[i].plid==this.plid && res.data.data[i].contentid==this.contentid){
-							this.collected=true;
-						}
-					}
-				}else{
-					console.log("收藏获取失败");
+			let hpcollect=this.userInfo.hpCollect;
+			for(var i=0;i<hpcollect.length;i++){
+				if(hpcollect[i].videoid==this.videoid){
+					this.isColl=true;
 				}
-            })
+			}
+		},
+		//判断是否点赞
+		isVoted(){
+			let votehistory=this.userInfo.voteHistory;
+			for(var i=0;i<votehistory.length;i++){
+				if(votehistory[i]==this.videoid){
+					this.isVote=true;
+				}
+			}
+				
 		},
 		//初始化数据，获取路由传来的参数
 		initDetail(){
 			this.loading=true;
 			this.videoid=this.$route.query.videoid;
 			this._getvideodata();	
-			// this.isCollected();	
 		},
 		//获取当前id的视频信息
         _getvideodata(){
@@ -159,6 +159,9 @@ export default {
 				this.videodata=res.data.data.videodata;	
 				this.commentNum=res.data.data.videodata.Comment.length;
 				this.userInfo=res.data.data.userdata;
+				//做点赞和收藏的判断
+				this.isCollected();
+				this.isVoted();	
 				this.loading=false;
 			})
         },
@@ -196,11 +199,11 @@ export default {
 			// this.loading=true;
 		    // this._getmorerecList();			    
         },
-		onCollect(){
+		onColl(){
 			// console.log("1");
 			if(this.loginstatus){
 				//发收藏请求
-				if(this.collected){
+				if(this.isColl){
 					this.deleteCollect();
 				}else{
 					this.addCollect();
@@ -211,39 +214,33 @@ export default {
 		},
 		deleteCollect(){
 			axios.post('/api/users/deleteCollect',{
+				status:1,
 				userid:window.localStorage.getItem('userid'),
-				plid :this.plid,
-				contentid:this.contentid,
+				videoid :this.videoid,
 			}).then((res)=>{
 				if(res.data.code){
-					this.collected=!this.collected;
+					this.isColl=!this.isColl;
 					// console.log(res.data);
+					this._getvideodata();
 					this.$vux.toast.text('取消收藏成功', 'middle');
 				}else{
 					this.$vux.toast.text('取消收藏失败', 'middle');
 				}					
 			})
 		},
-		addCollect(){
-			let tit='';
-			if(this.isVideoCollection){
-				tit=this.moviedata.tit+"之"+this.videolist.title
-			}else{
-				tit=this.moviedata.tit
-			}			
+		addCollect(){		
 			axios.post('/api/users/addCollect',{
+				status:1,
 				userid:window.localStorage.getItem('userid'),
-				plid :this.plid,
-				contentid:this.contentid,
-				img:this.videolist.imgPath,
-                tit:tit,
-                desc:this.moviedata.description,
-                director:this.moviedata.director,
-                viewcount:this.moviedata.hits,
+				videoid :this.videodata.videoid,
+                tit:this.videodata.tit,
+				desc:this.videodata.desc,
+				videoUrl:this.videodata.videoUrl,
 			}).then((res)=>{
 				if(res.data.code){
-					this.collected=!this.collected;
+					this.isColl=!this.isColl;
 					// console.log(res.data);
+					this._getvideodata();
 					this.$vux.toast.text('收藏成功', 'middle');
 				}else{
 					this.$vux.toast.text('收藏失败', 'middle');
@@ -299,11 +296,10 @@ export default {
 		startplay(){		
 			let date=new Date();	
 			axios.post('/api/users/addhistory',{
+				status:1,
 				userid:window.localStorage.getItem('userid'),
-				plid :this.plid,
-				contentid:this.contentid,
-				tit:this.moviedata.tit,
-				director:this.moviedata.director,
+				videoid :this.videodata.videoid,
+				tit:this.videodata.tit,
 				playtime:date.toLocaleString()
 			}).then((res)=>{
 				if(res.data.code){
@@ -313,11 +309,49 @@ export default {
 				}					
 			})
 		},
-		onColl(){
-
-		},
 		onVote(){
-
+			if(this.loginstatus){
+				//发收藏请求
+				if(this.isVote){
+					this.deleteVote();
+				}else{
+					this.addVote();
+				}				
+			}else{
+				this.$vux.toast.text('登录后才能点赞喔！', 'middle');
+			}
+		},
+		deleteVote(){
+			axios.post('/api/users/deleteVote',{
+				userid:window.localStorage.getItem('userid'),
+				videoid :this.videoid,
+			}).then((res)=>{
+				if(res.data.code){
+					this.isVote=!this.isVote;
+					// console.log(res.data);
+					this._getvideodata();
+					this.$vux.toast.text('取消点赞成功', 'middle');
+				}else{
+					this.$vux.toast.text('取消点赞失败', 'middle');
+				}					
+			})
+		},
+		addVote(){		
+			axios.post('/api/users/addVote',{
+				userid:window.localStorage.getItem('userid'),
+				videoid :this.videodata.videoid,
+			}).then((res)=>{
+				if(res.data.code){
+					this.isVote=!this.isVote;
+					// console.log(res.data);
+					this._getvideodata();
+					this.$vux.toast.text('点赞成功', 'middle');
+				}else{
+					this.$vux.toast.text('点赞失败', 'middle');
+				}
+					
+			})
+			
 		},
 		goComment(){
 

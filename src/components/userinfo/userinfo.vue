@@ -1,6 +1,6 @@
 <template>
     <div class="userinfo">
-        <x-header :left-options="{backText: ''}">个人信息</x-header>
+        <x-header :left-options="{backText: ''}" :right-options="{showMore: true}" @on-click-more="showMenus = true">个人信息</x-header>
         <div class="user_form">
             
             <group>      
@@ -37,18 +37,25 @@
                 <p style="text-align:center;">{{ ('Are you sure?') }}</p>
             </confirm>
         </div>
+        <div>
+            <actionsheet :menus="menus" v-model="showMenus" show-cancel @on-click-menu="onclickmenu"></actionsheet>
+        </div>
         <loading :show="loading" text="loading" ></loading>
     </div>
 </template>
 <script>
 import Vue from "vue";
-import {XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,ToastPlugin,Confirm,Loading} from "vux";
+import {XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,ToastPlugin,Confirm,Loading,Actionsheet} from "vux";
 Vue.use(ToastPlugin);
 import {mapMutations} from "vuex"
 import axios from 'axios';
 export default {
     data(){
         return {
+            showMenus:false,
+            menus: {
+                changepassword: '修改密码',
+            },
             oldurl:'',
             confirmshow:false,
             sexlist:['男','女'],
@@ -58,7 +65,7 @@ export default {
         }
     },
     components:{
-        XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,Confirm,Loading
+        XHeader,XInput,Group,XButton,XTextarea,PopupRadio,Range,Cell,Radio,Confirm,Loading,Actionsheet
     },
     mounted(){
         //发请求拿数据
@@ -170,10 +177,16 @@ export default {
                 self.compressData=canvas.toDataURL();
             }           
         },
+        onclickmenu(key,item){
+            if(key=='changepassword'){
+                this.$router.push({path:'/changepassword'});
+            }
+        },
         ...mapMutations([
 			'SET_LOGINSTATUS',
 		])
     },
+    
     watch:{
         userBaseInfo:{
             handler:function(val,oldval){  

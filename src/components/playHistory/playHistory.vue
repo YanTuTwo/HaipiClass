@@ -5,7 +5,7 @@
             <div class="history">
                 <div class="history-item" v-for="item in historyList" @click="goPlayDetail(item)">
                     <p class="tit">{{item.tit}}</p>
-                    <p class="author text-grey">{{item.director}} | <span>{{item.playtime}}</span></p>
+                    <p class="author text-grey"><span>{{item.playtime}}</span></p>
                 </div>
             </div>
         </scroller>
@@ -74,9 +74,9 @@ export default {
             })
         },
         goPlayDetail(item){
-            if(item.id){
-                let id=item.id;
-                this.$router.push({ path: '/hpplayDetail', query: { plid: plid,contentid:contentid}})
+            if(item.videoid){
+                let videoid=item.videoid;
+                this.$router.push({ path: '/videoDetail', query: { videoid: videoid}})
             }else{
                 let plid=item.plid;
                 let contentid=item.contentid;

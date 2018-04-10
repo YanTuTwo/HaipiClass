@@ -10,13 +10,13 @@
                 <div class="video-list-wrap">				
                     <div class="videoitem" v-for="(item,index) in videoList" :key="item._id">
                         <div class="videowrapper"> 
-                            <video width="100%" controls  :src="item.videoUrl"  ref='video' ></video>
+                            <video width="100%" controls  :src="item.videoUrl"  ref='video' @play="startplay(item)"></video>
                         </div>
                         <div class="author">
                             <img :src="item.userinfo.avatar" alt=""><span>{{item.userinfo.nickname}}</span>
                         </div>
-                        <div class="video-detail">
-                            <div class="video-tit" @click="goVideoDetail(item.videoid)">{{item.tit}}</div>
+                        <div class="video-detail" @click="goVideoDetail(item.videoid)">
+                            <div class="video-tit">{{item.tit}}</div>
                             <div class="video-about">
                                 <div class="video-zan">
                                     <span class="iconfont icon-dianzan"></span>
@@ -111,6 +111,22 @@ export default {
         goVideoDetail(id){
             this.$router.push({ path: '/videoDetail', query: {videoid:id}})
         },
+        startplay(item){
+            let date=new Date();	
+			axios.post('/api/users/addhistory',{
+				status:1,
+				userid:window.localStorage.getItem('userid'),
+				videoid :item.videoid,
+				tit:item.tit,
+				playtime:date.toLocaleString()
+			}).then((res)=>{
+				if(res.data.code){
+					console.log("开始播放，记录");
+				}else{
+					console.log("记录失败");
+				}					
+			})
+        }
     }
 }
 </script>

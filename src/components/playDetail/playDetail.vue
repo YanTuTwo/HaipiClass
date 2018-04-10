@@ -217,6 +217,7 @@ export default {
 		},
 		deleteCollect(){
 			axios.post('/api/users/deleteCollect',{
+				status:0,
 				userid:window.localStorage.getItem('userid'),
 				plid :this.plid,
 				contentid:this.contentid,
@@ -238,6 +239,7 @@ export default {
 				tit=this.moviedata.tit
 			}			
 			axios.post('/api/users/addCollect',{
+				status:0,
 				userid:window.localStorage.getItem('userid'),
 				plid :this.plid,
 				contentid:this.contentid,
@@ -310,6 +312,7 @@ export default {
 		startplay(){		
 			let date=new Date();	
 			axios.post('/api/users/addhistory',{
+				status:0,
 				userid:window.localStorage.getItem('userid'),
 				plid :this.plid,
 				contentid:this.contentid,

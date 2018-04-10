@@ -18,36 +18,7 @@
                         <p class="commentcon">我擦，我上着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
                         <span class="commenttime">2018/2/2</span>
                     </li>
-                    <li>
-                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
-                        <p class="avatar text-primary">高冷逗神经 <span class="text-grey">赞了你的评论</span></p>
-                        <p class="commentcon">我擦，我上着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
-                        <span class="commenttime">2018/2/2</span>
-                    </li>
-                    <li>
-                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
-                        <p class="avatar text-primary">高冷经 <span class="text-grey">赞了你的评论</span></p>
-                        <p class="commentcon">我擦，我上着班呢，，以为外放了。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
-                        <span class="commenttime">2018/2/2</span>
-                    </li>
-                    <li>
-                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
-                        <p class="avatar text-primary">高冷 <span class="text-grey">赞了你的评论</span></p>
-                        <p class="commentcon">我擦，我上着班呢，，以为外放以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
-                        <span class="commenttime">2018/2/2</span>
-                    </li>
-                    <li>
-                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
-                        <p class="avatar text-primary">高冷经 <span class="text-grey">赞了你的评论</span></p>
-                        <p class="commentcon">我擦，我上着班呢，，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
-                        <span class="commenttime">2018/2/2</span>
-                    </li>
-                    <li>
-                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
-                        <p class="avatar text-primary">高冷女神经 <span class="text-grey">赞了你的评论</span></p>
-                        <p class="commentcon">我擦，了。。为外放了。。。</p>
-                        <span class="commenttime">2018/2/2</span>
-                    </li>
+                    
                 </ul>
             </div>
         </scroller>

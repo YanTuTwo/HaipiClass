@@ -2,47 +2,14 @@
     <div class="myVideo">
         <x-header :left-options="{backText: ''}">我的作品<a slot="right" @click="clearhistory" v-if="!ishistoryListEmpty">清空</a></x-header>
         <div>
-            <section  class="collectItem">
+            <section  class="collectItem" v-for="item in myVideoList" @click="goVideoDetail(item)">
                 <div class="collectItem_img">
-                    <img src="http://open-image.nosdn.127.net/image/snapshot_movie/2018/2/J/B/MDADR0QJB.jpg" alt="" />
+                   <video :src="item.videoUrl"></video>
                 </div>
                 <div class="collectItem_info">
-                    <div class="collectItem_tit"><span>改变命运的机会课不多</span></div>
+                    <div class="collectItem_tit"><span>{{item.tit}}</span></div>
                     <div class="collectItem_desc"> 
-                        <span class="collectItem_length">Yantutu</span>                                             
-                    </div>
-                </div>
-            </section> 
-            <section  class="collectItem">
-                <div class="collectItem_img">
-                    <img src="http://open-image.nosdn.127.net/image/snapshot_movie/2018/1/b/d/0fac1e5127a84f33813f1e8d4f7fabbd.jpg" alt="" />
-                </div>
-                <div class="collectItem_info">
-                    <div class="collectItem_tit"><span>我顶顶顶顶</span></div>
-                    <div class="collectItem_desc"> 
-                        <span class="collectItem_length">Yantutu</span>                                             
-                    </div>
-                </div>
-            </section> 
-            <section  class="collectItem">
-                <div class="collectItem_img">
-                    <img src="http://open-image.nosdn.127.net/image/snapshot_movie/2018/1/2/d/4d032c9816cf4c6c8f02d60098c1df2d.jpg" alt="" />
-                </div>
-                <div class="collectItem_info">
-                    <div class="collectItem_tit"><span>超搞笑蜡笔小新</span></div>
-                    <div class="collectItem_desc"> 
-                        <span class="collectItem_length">Yantutu</span>                                             
-                    </div>
-                </div>
-            </section> 
-            <section  class="collectItem">
-                <div class="collectItem_img">
-                    <img src="http://open-image.nosdn.127.net/image/snapshot_movie/2018/2/J/B/MDADR0QJB.jpg" alt="" />
-                </div>
-                <div class="collectItem_info">
-                    <div class="collectItem_tit"><span>奥特曼打怪兽拉阿拉</span></div>
-                    <div class="collectItem_desc"> 
-                        <span class="collectItem_length">Yantutu</span>                                             
+                        审核状态：<span class="collectItem_length" :class="{notpass:item.pending==2,pending:item.pending==0}">{{item.pending==0?"待审核":(item.pending==1?"已通过":"未通过")}}</span>                                             
                     </div>
                 </div>
             </section> 
@@ -50,23 +17,49 @@
     </div> 
 </template>
 <script>
+import axios from 'axios'
 import {XHeader,Scroller,ConfirmPlugin,ToastPlugin} from 'vux'
 export default {
     data(){
         return{
             ishistoryListEmpty:true,
-            CollectList:[],
+            myVideoList:[],
         }
     },
     components:{
         XHeader
     },
+    mounted(){
+        this.getmyvideo();
+    },
     methods:{
+        getmyvideo(){
+            let userid=window.localStorage.getItem('userid');
+            axios.get('/api/users/getmyvideo?userid='+userid).then((res)=>{
+				if(res.data.code){                   
+                    this.myVideoList=res.data.data.reverse();
+				}else{
+                    this.$vux.toast.text('获取失败', 'middle');
+				}					
+			})
+        },
         clearhistory(){
 
         },
         onWyCollect(){
 
+        },
+        goVideoDetail(item){
+            if(item.pending==0){
+                this.$vux.toast.text('请耐心等待审核！','middle');
+                return ;
+            }
+            if(item.pending==2){
+                this.$vux.toast.text('该视频审核未通过，请重新上传！','middle');
+                return ;
+            }
+            let videoid=item.videoid;
+            this.$router.push({ path: '/videoDetail', query: { videoid: videoid}})
         }
     }
 }
@@ -86,7 +79,7 @@ export default {
 		width: 4.4rem;
 		height: 3rem;
 		margin-right: 0.8rem;
-        img{
+        video{
             width: 100%;
             height: 100%;
         }
@@ -109,6 +102,12 @@ export default {
             overflow:hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            .notpass{
+                color: red
+            }
+            .pending{
+                color: rgb(255, 213, 114)
+            }
         }
     }
     

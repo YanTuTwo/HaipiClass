@@ -41,7 +41,7 @@ Vue.filter('ConvertPeople', function (value) {
 	if(value>10000){
 		str=parseInt(value/10000)+'.'+parseInt(value%10000/1000)+'万';
 	}else{
-		str=count;
+		str=value;
 	}
   return str
 })

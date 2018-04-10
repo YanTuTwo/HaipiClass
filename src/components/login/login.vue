@@ -101,7 +101,7 @@ export default {
                     window.localStorage.setItem("password",this.password);
                     console.log("存入缓存");
                     this.SET_LOGINSTATUS(true);
-                    this.$router.push({path:'index/recommend'});
+                    this.$router.push({path:'/index/recommend'});
                 }else{
                     this.$vux.toast.text('账号或密码不正确', 'bottom');
                 }
