@@ -11,14 +11,29 @@
         <div ref="scrollerwrapper">
         <scroller lock-x :scrollbar-y=false :height="scrolltop" ref='scroller'  @on-pullup-loading="pullup" @on-scroll='onscroll'>
             <div class="noticeWrap">
-                <ul>
-                    <li>
-                        <div class="avatarimg"><img src="http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png" alt=""></div>
-                        <p class="avatar text-primary">高冷逗比女神经 <span class="text-grey">赞了你的评论</span></p>
-                        <p class="commentcon">我擦，我上着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。着班呢，，以为外放了。。。</p>
-                        <span class="commenttime">2018/2/2</span>
-                    </li>
-                    
+                <ul v-if="Tabindex==0">
+                    <li v-for="voteitem in votelist">
+                        <div class="avatarimg"><video :src="voteitem.videoUrl"></video></div>
+                        <p class="avatar text-primary">{{voteitem.actionid}} <span class="text-grey">点赞了你的视频</span></p>
+                        <p class="commentcon">你上传的视频：{{voteitem.videotit}}</p>
+                        <span class="commenttime">{{voteitem.time | ConvertTime}}</span>
+                    </li>                   
+                </ul>
+                <ul v-if="Tabindex==1">
+                    <li v-for="commitem in commentlist">
+                        <div class="avatarimg"><video :src="commitem.videoUrl"></video></div>
+                        <p class="avatar text-primary">{{commitem.actionid}} <span class="text-grey">评论了你的视频</span></p>
+                        <p class="commentcon">{{commitem.content}}</p>
+                        <span class="commenttime">{{commitem.time | ConvertTime}}</span>
+                    </li>                   
+                </ul>
+                <ul v-if="Tabindex==2">
+                    <li v-for="messitem in messagelist">
+                        <div class="avatarimg"><video :src="messitem.videoUrl"></video></div>
+                        <p class="avatar text-primary">{{messitem.actionid}} <span class="text-grey">赞了你的评论</span></p>
+                        <p class="commentcon">{{messitem.content}}</p>
+                        <span class="commenttime">{{messitem.time | ConvertTime}}</span>
+                    </li>                   
                 </ul>
             </div>
         </scroller>
@@ -34,6 +49,10 @@ Vue.use(ToastPlugin);
 export default {
     data(){
         return {
+            // userBaseInfo:{},
+            votelist:[],
+            messagelist:[],
+            commentlist:[],
             noticeList:[
                 {
                     userid:'11111',
@@ -54,7 +73,7 @@ export default {
         ButtonTabItem
     },
     mounted(){
-        this.getHistory();
+        this.getuserinfo();
         this.initScroll();
     },
     methods:{
@@ -69,34 +88,41 @@ export default {
         onscroll(){
 
         },
-        getHistory(){
-            let userid=window.localStorage.getItem('userid');
-            axios.get('/api/users/gethistory?userid='+userid).then((res)=>{
+        getuserinfo(){
+            axios.get("/api/users/getuserinfo",{
+				params:{
+					userid:window.localStorage.getItem("userid"),
+				},
+			}).then((res)=>{
 				if(res.data.code){
-                    console.log(res.data.data);
-                    if(res.data.data==''){
-                        this.ishistoryListEmpty=true;
+                    this.noticeList=res.data.data.notice.reverse();
+                    for(var i=0;i<this.noticeList.length;i++){
+                        if(this.noticeList[i].type=="vote"){
+                            this.votelist.push(this.noticeList[i])
+                        }else if(this.noticeList[i].type=="message"){
+                            this.messagelist.push(this.noticeList[i])
+                        }else if(this.noticeList[i].type=="comment"){
+                            this.commentlist.push(this.noticeList[i])
+                        }
                     }
-                    this.historyList=res.data.data.reverse();
-				}else{
-                    this.$vux.toast.text('获取失败', 'middle');
-				}					
+				}				
 			})
         },
         clearhistory(){
             const self = this // 需要注意 onCancel 和 onConfirm 的 this 指向
             this.$vux.confirm.show({
             // 组件除show外的属性
-                title: '清除所有播放记录',
+                title: '清除记录',
                 content: 'Are you sure?',
                 onConfirm () {
-                    axios.post('/api/users/delehistory',{
+                    axios.post('/api/users/delenotice',{
                         userid:window.localStorage.getItem('userid'),
+                        type:self.Tabindex,//0是点赞，1是评论，2是通知
                     }).then((res)=>{
                         if(res.data.code){
-                            self.historyList=[];
-                            console.log("清空记录成功");
-                            self.ishistoryListEmpty=true;
+                            self.getuserinfo();
+                            // self.ishistoryListEmpty=true;
+                            console.log("清空成功");
                         }else{
                             console.log("清空失败");
                         }					
@@ -127,7 +153,7 @@ export default {
 }
 .noticeWrap{
     background: #fff;
-    font-size: .8rem;
+    font-size: .9rem;
     li{
         position: relative;
         padding: .5rem 1rem;
@@ -146,6 +172,10 @@ export default {
                 width: 100%;
                 height: 100%;
                 border-radius: 50%;
+            }
+            video{
+                width: 100%;
+                height: 100%;
             }
         }
         .commenttime{

@@ -24,16 +24,16 @@
 					<h3 class="hotcomments-tit">热门评论</h3>
 					<div class="hotcomments">							
 						<ul>
-							<li v-for="item in hotlist">
-								<div class="user">{{item.nickname}}<span>2018/3/30</span></div>
+							<li v-for="item in commentlist">
+								<div class="user">用户{{item.userid}}<span>{{item.time | ConvertTime}}</span></div>
 								<p class="comments-con" v-html="item.content"></p>
 							</li>
-							<li v-if="isEmptyhotlist">
+							<li v-if="isEmptycommentlist">
 								<load-more :show-loading="false" :tip="('暂无评论')" background-color="#fbf9fe"></load-more>
 							</li>
 						</ul>
 					</div>
-					<h3 class="aboutrecommend">相关推荐</h3>
+					<h3 class="aboutrecommend">精彩推荐</h3>
 					<listview :data="recommendList"  @select="selectItem"></listview>
 				</div>		
 			</scroller> 
@@ -43,8 +43,7 @@
 			<span class="iconfont icon-jiantoushang"></span>
 		</div>
 		<div class="comment" ref="comment">
-			<input type="text" v-model="commentCentent" placeholder="评论点什么吧！"><span>发送</span>
-			
+			<input type="text" v-model="commentCentent" placeholder="评论点什么吧！"><span @click="sendcomment">发送</span>			
 		</div>
 		<loading :show="loading" text="loading" ></loading>      
     </div>
@@ -59,6 +58,7 @@ import axios from 'axios'
 export default {
     data(){
         return {
+			userBaseInfo:{},//当前用户的信息
 			scrolltop:'',
 			videodata:{},
 			userInfo:{},
@@ -67,28 +67,8 @@ export default {
 			loading:false,
 			showbtn:false,
 			commentNum:0,
-			hotlist:[
-				
-				{
-					avatar:"http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png",
-					nickname:'圣诞节ad静安寺来看待',
-					content:'人总是势必的大大加快了',
-					commentTime:379182378913,
-				},
-				{
-					avatar:"http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png",
-					nickname:'圣诞节ad静安寺来看待',
-					content:'人总是势必的大大加快了',
-					commentTime:379182378913,
-				},
-				{
-					avatar:"http://193.112.95.221:9999/images/avatarimg/1522219651924admin.png",
-					nickname:'圣诞节ad静安寺来看待',
-					content:'人总是势必的大大加快了',
-					commentTime:379182378913,
-				}
-			],
-			isEmptyhotlist:false,
+			commentlist:[],
+			isEmptycommentlist:false,
 			commentCentent:'',
 			isColl:false,
 			isVote:false,
@@ -129,7 +109,7 @@ export default {
         },
 		//判断是否收藏
 		isCollected(){
-			let hpcollect=this.userInfo.hpCollect;
+			let hpcollect=this.userBaseInfo.hpCollect;
 			for(var i=0;i<hpcollect.length;i++){
 				if(hpcollect[i].videoid==this.videoid){
 					this.isColl=true;
@@ -138,9 +118,9 @@ export default {
 		},
 		//判断是否点赞
 		isVoted(){
-			let votehistory=this.userInfo.voteHistory;
+			let votehistory=this.userBaseInfo.voteHistory;
 			for(var i=0;i<votehistory.length;i++){
-				if(votehistory[i]==this.videoid){
+				if(votehistory[i].videoid==this.videoid){
 					this.isVote=true;
 				}
 			}
@@ -151,6 +131,7 @@ export default {
 			this.loading=true;
 			this.videoid=this.$route.query.videoid;
 			this._getvideodata();	
+			this.getcommentlist();
 		},
 		//获取当前id的视频信息
         _getvideodata(){
@@ -159,9 +140,8 @@ export default {
 				this.videodata=res.data.data.videodata;	
 				this.commentNum=res.data.data.videodata.Comment.length;
 				this.userInfo=res.data.data.userdata;
-				//做点赞和收藏的判断
-				this.isCollected();
-				this.isVoted();	
+				//做点赞和收藏的判断	
+				this.getUserInfo();
 				this.loading=false;
 			})
         },
@@ -181,17 +161,16 @@ export default {
 				this.$refs.scroller.donePullup();
 			})
 		},
-        _gethotlist(){
-			axios.get('/api/playDetail/getcomments?contentid='+this.contentid+'&flag='+this.hotlistflag).then((res)=>{
-		   		if(this.hotlistfla=='all'){
-		   			this.hotlist=res.data;
-		   		}
-				this.hotlist=this.hotlist.concat(res.data);
-				if(this.hotlist==""){
-					this.isEmptyhotlist=true;
-				}else{
-					this.isEmptyhotlist=false;
-				}
+        getcommentlist(){
+			axios.get('/api/users/getcommentlist?videoid='+this.videoid,{}).then((res)=>{
+				   console.log(res.data);
+				   if(res.data.code){
+					   if(res.data.data.Comment.length==0){
+						   this.isEmptycommentlist=true;
+						   return ;
+					   }
+					   this.commentlist=res.data.data.Comment;
+					}
 			})
         },
         pullup(){
@@ -232,7 +211,7 @@ export default {
 			axios.post('/api/users/addCollect',{
 				status:1,
 				userid:window.localStorage.getItem('userid'),
-				videoid :this.videodata.videoid,
+				videoid :this.videoid,
                 tit:this.videodata.tit,
 				desc:this.videodata.desc,
 				videoUrl:this.videodata.videoUrl,
@@ -274,31 +253,31 @@ export default {
 				}
 			}			
 		},
-		lastnextVideo(arr,currentindex){
-			if(arr.length<=3){
-				this.currentVideoList=arr;
-				return false;
-			}else{				
-				if(arr.length-1==currentindex){
-					this.currentVideoList=arr.slice(currentindex-2,currentindex+1);
-					this.currentVideoIndex=2;
-					return false;
-				}
-				if(currentindex==0){
-					this.currentVideoList=arr.slice(currentindex,currentindex+3);
-					this.currentVideoIndex=0;
-					return false;
-				}
-				this.currentVideoList=arr.slice(currentindex-1,currentindex+2);
-				this.currentVideoIndex=1;
-			}			
-		},
+		// lastnextVideo(arr,currentindex){
+		// 	if(arr.length<=3){
+		// 		this.currentVideoList=arr;
+		// 		return false;
+		// 	}else{				
+		// 		if(arr.length-1==currentindex){
+		// 			this.currentVideoList=arr.slice(currentindex-2,currentindex+1);
+		// 			this.currentVideoIndex=2;
+		// 			return false;
+		// 		}
+		// 		if(currentindex==0){
+		// 			this.currentVideoList=arr.slice(currentindex,currentindex+3);
+		// 			this.currentVideoIndex=0;
+		// 			return false;
+		// 		}
+		// 		this.currentVideoList=arr.slice(currentindex-1,currentindex+2);
+		// 		this.currentVideoIndex=1;
+		// 	}			
+		// },
 		startplay(){		
 			let date=new Date();	
 			axios.post('/api/users/addhistory',{
 				status:1,
 				userid:window.localStorage.getItem('userid'),
-				videoid :this.videodata.videoid,
+				videoid :this.videoid,
 				tit:this.videodata.tit,
 				playtime:date.toLocaleString()
 			}).then((res)=>{
@@ -323,8 +302,9 @@ export default {
 		},
 		deleteVote(){
 			axios.post('/api/users/deleteVote',{
-				userid:window.localStorage.getItem('userid'),
+				userid:window.localStorage.getItem('userid'),//点赞人id
 				videoid :this.videoid,
+				
 			}).then((res)=>{
 				if(res.data.code){
 					this.isVote=!this.isVote;
@@ -339,7 +319,10 @@ export default {
 		addVote(){		
 			axios.post('/api/users/addVote',{
 				userid:window.localStorage.getItem('userid'),
-				videoid :this.videodata.videoid,
+				videoid :this.videoid,
+				authorid:this.videodata.userid,
+				videotit:this.videodata.tit,
+				videoUrl:this.videodata.videoUrl
 			}).then((res)=>{
 				if(res.data.code){
 					this.isVote=!this.isVote;
@@ -355,8 +338,46 @@ export default {
 		},
 		goComment(){
 
+		},
+		//获取当前用户的信息做收藏点赞的更新
+		getUserInfo(){
+			axios.get("/api/users/getuserinfo",{
+				params:{
+					userid:window.localStorage.getItem("userid"),
+				},
+			}).then((res)=>{
+				if(res.data.code){
+					this.userBaseInfo=res.data.data;
+					this.isCollected();
+					this.isVoted();
+				}				
+			})
+		},
+		//评论
+		sendcomment(){
+			if(this.commentCentent!=""){
+				axios.post("/api/users/addcomment",{
+					content:this.commentCentent,
+					videoid:this.videoid,
+					actionid:window.localStorage.getItem('userid'),
+					userid:this.videodata.userid,
+					videotit:this.videodata.tit,
+					videoUrl:this.videodata.videoUrl
+				}).then((res)=>{
+					console.log(res.data);
+					if(res.data.code){
+						this.commentCentent="";
+						this.getcommentlist();
+						this.$vux.toast.text('评论成功', 'middle');
+					}else{
+						this.commentCentent="";
+						this.$vux.toast.text('评论失败', 'middle');
+					}
+					
+				})
+			}
 		}
-    },
+	},
 	watch: {
 		'$route' (to, from) {
 			this.hotlistflag="three";
