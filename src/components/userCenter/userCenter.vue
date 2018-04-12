@@ -8,7 +8,7 @@
             <scroller lock-y :scrollbar-x=false>
                 <div class="box1" id="scroll">
                     <div class="box1-item" v-for="(img, index) in bgList"><img :src="img" style="width:100%" @click="bgAvatarUrl = img"/></div>
-                    <div class="box1-item addbg" ><span>+</span></div>
+                    <!-- <div class="box1-item addbg" ><span>+</span></div> -->
                 </div>
             </scroller>
         </div>
@@ -68,7 +68,7 @@ export default {
         Confirm
     },
     mounted(){
-        document.getElementById('scroll').style.width=(this.bgList.length+1)*6+'rem';
+        document.getElementById('scroll').style.width=(this.bgList.length)*6+'rem';
         this.bgAvatarHeight=parseFloat(document.querySelector('html').style.fontSize)*12;
        
     },

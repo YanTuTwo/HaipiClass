@@ -8,8 +8,7 @@
             </button-tab>
         </div>        
         <div ref="scrollerwrapper">
-        <scroller lock-x :scrollbar-y=false :height="scrolltop" ref='scroller' :use-pullup="usePullup" @on-pullup-loading="pullup" @on-scroll='onscroll'
-		:pullupConfig="{ loadingContent: '<load-more></load-more>',upContent: '加载中...',height:50,content: '上拉加载更多',downContent: '释放加载更多',}">
+        <scroller lock-x :scrollbar-y=false :height="scrolltop" ref='scroller'  @on-scroll='onscroll'>
                 <div>
                     <section  class="collectItem" v-for="(classItem,index) in CollectList" v-if="Tabindex==0" @click="onWyCollect(index)">
                         <div class="collectItem_img">
@@ -25,7 +24,7 @@
                     </section>   
                     <section  class="collectItem" v-for="(funItem,index) in CollectList" v-if="Tabindex==1" @click="onHpCollect(index)">
                         <div class="collectItem_img">
-                            <video :src="funItem.videoUrl"></video>
+                            <img :src="funItem.videoimg" />
                         </div>
                         <div class="collectItem_info">
                             <div class="collectItem_tit"><span>{{funItem.tit}}</span></div>
@@ -35,6 +34,12 @@
                             </div>
                         </div>
                     </section> 
+                    <div v-if="isEmptylist && Tabindex==0" style="padding: 0px;padding-top:  2em;height:  auto;">
+						<load-more :show-loading="false" :tip="('暂无课程收藏')" background-color="transparent"></load-more>
+					</div> 
+                    <div v-if="isEmptylist && Tabindex==1 " style="padding: 0px;padding-top:  2em;height:  auto;">
+						<load-more :show-loading="false" :tip="('暂无娱乐收藏')" background-color="transparent"></load-more>
+					</div>
                 </div>
                         
         </scroller>
@@ -53,6 +58,7 @@ export default {
             usePullup:false,
             CollectList:[],
             loading:true,
+            isEmptylist:false,
         }
     },
     components:{
@@ -80,6 +86,9 @@ export default {
                 console.log(res.data.data);
                 if(res.data.code){
                     this.CollectList=res.data.data;
+                    if(this.CollectList.length==0){
+                        this.isEmptylist=true;
+                    }
                     this.loading=false;
                 }
             })
@@ -87,9 +96,6 @@ export default {
         onChangeTab () {
             console.log(this.Tabindex);
             this.getCollectList();
-        },
-        pullup(){
-
         },
         onscroll(){
 

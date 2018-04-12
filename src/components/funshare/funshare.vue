@@ -4,13 +4,12 @@
             <scroller ref="scroller" lock-x :scrollbar-y=false 
                 :use-pulldown=true :height='scrolltop'
                 @on-pulldown-loading='success' 
-                @on-scroll-bottom='scrollbottom'
                 :pulldownConfig="{ loadingContent: '<div></div>',upContent: '拉什么拉，快放手！',height:50,content: '下拉刷新',downContent: '下拉可刷新',}"
                 @on-scroll='onscroll'>			
                 <div class="video-list-wrap">				
-                    <div class="videoitem" v-for="(item,index) in videoList" :key="item._id">
+                    <div class="videoitem" v-for="item in videoList" :key="item._id">
                         <div class="videowrapper"> 
-                            <video width="100%" controls  :src="item.videoUrl"  ref='video' @play="startplay(item)"></video>
+                            <video width="100%" controls  :src="item.videoUrl"  ref='video' @play="startplay(item)" :poster="item.videoimg"></video>
                         </div>
                         <div class="author">
                             <img :src="item.userinfo.avatar" alt=""><span>{{item.userinfo.nickname}}</span>
@@ -36,6 +35,9 @@
                 </div>
             </scroller>
         </div> 
+        <div class="backtotop" @click="backtotop" v-show="showbtn">
+			<span class="iconfont icon-jiantoushang"></span>
+		</div>
         <loading :show="loading" text="loading" ></loading>
     </div>
 </template>
@@ -45,6 +47,7 @@ import axios from "axios"
 export default {
     data(){
         return{
+            showbtn: false,
             scrolltop:'',
             videoList:[],
             userlist:[],
@@ -64,6 +67,7 @@ export default {
         this.getVideoList();
     },
     mounted(){
+        this.getVideoList();
         this.initScroll();       
     },
     methods:{
@@ -91,11 +95,14 @@ export default {
                 }
             })
         },
-        pullup(){
-
-        },
-        onscroll(){
-
+        onscroll(position){
+            if(position!=null){
+				if(position.top>200){
+					this.showbtn=true;
+				}else{
+					this.showbtn=false
+				}
+			}
         },
         //下拉刷新重新获取数据
 		success(){
@@ -105,8 +112,8 @@ export default {
 				this.$refs.scroller.reset({top:0})
 			},1000)
         },
-        scrollbottom(){
-            
+        backtotop(){
+			this.$refs.scroller.reset({top:0});
         },
         goVideoDetail(id){
             this.$router.push({ path: '/videoDetail', query: {videoid:id}})

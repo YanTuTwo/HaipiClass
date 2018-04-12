@@ -5,6 +5,8 @@
             <label for="file" class="videolable"><span class="iconfont icon-shangchuan"></span>上传视频</label>
             <input type="file" id="file" @change="getFile($event)" style="display: none;">
             <p>{{file.name}}</p>
+            <!-- <img :src="imgSrc" alt="" width="100%"> -->
+            <video controls width="100%" ref="video" :src="videoSrc" id="video" style="display:none"></video>
             <x-progress :percent="percent" :show-cancel="false"></x-progress>
             <p class="text-grey ft-12">*上传过程中请勿离开本页面，否则会导致上传失败！</p>
         </div>
@@ -26,6 +28,7 @@ import {XHeader,Scroller,ConfirmPlugin,ToastPlugin,XProgress,XButton,Group,XText
 Vue.use(ToastPlugin);
 import COS from "cos-js-sdk-v5"
 import axios from "axios"
+import { setTimeout } from 'timers';
 export default {
     data(){
         return {
@@ -35,6 +38,8 @@ export default {
             videoTit:'',
             videoDesc:'',
             cos:'',
+            imgSrc:"",
+            videoSrc:'',
         }
     },
     props:{
@@ -50,22 +55,38 @@ export default {
     },
     methods:{
         getFile(event){
+            var self=this;
             this.file=event.target.files[0];
+            var fr = new FileReader();
+            fr.readAsDataURL(event.target.files[0]);
+            fr.onload=function(){
+                console.log(fr);
+                self.videoSrc=fr.result;  
+                // console.log(self.$refs.video);
+                // console.log(document.getElementById("video"))
+                                              
+            } 
+            
             console.log(this.file);
         },
         saveData(location){
+            var self=this;
             var date=new Date();
             var videoid=date.getTime()+window.localStorage.getItem('userid');
-            axios.post('/api/upload/upvideo',{
-                videoid:videoid,
-                userid:window.localStorage.getItem('userid'),
-                // avatar:this.userBaseInfo.avatar,
-                // nickname:this.userBaseInfo.nickname,
-                tit:this.videoTit,
-                desc:this.videoDesc,
-                uptime:date.getTime(),
-                videoUrl:location,
-            }).then((res)=>{
+            let formData=new FormData();             
+            formData.append('videoid',videoid);
+            formData.append('tit',self.videoTit);
+            formData.append('userid',window.localStorage.getItem('userid'));
+            formData.append('desc',self.videoDesc);
+            formData.append('uptime',date.getTime());
+            formData.append('videoUrl',location);
+            formData.append('imgfile',self.videoimg);
+            const config = {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            }
+            axios.post('/api/upload/upvideo',formData,config).then((res)=>{
                 if(res.data.code){
                     this.$vux.toast.text('上传成功，请耐心等待审核！', 'middle');
                     this.file='';
@@ -77,8 +98,10 @@ export default {
             })
         },
         putobject(){
+            this.saveImg(this.$refs.video); 
             if(this.videoTit=='' || this.videoDesc==''){
                 this.$vux.toast.text('请填写视频相关信息', 'middle');
+                
                 return ;
             }
             if(this.file=='' || this.file.type.slice(0,5)!='video'){
@@ -104,7 +127,20 @@ export default {
                 console.log(err||data);
                 self.saveData(data.Location);
             });
+        },
+        saveImg(result){
+            console.log("截取")
+            var self=this;
+		    var scale = 0.8;
+			var canvas = document.createElement("canvas");
+			canvas.width =  650;
+			canvas.height =  400;
+			canvas.getContext('2d').drawImage(result, 0, 0, canvas.width, canvas.height);
+            self.imgSrc = canvas.toDataURL("image/png");
+            self.videoimg=canvas.toDataURL();
+            // saveImg=canvas.toDataURL("image/png")
         }
+
         
     }
 }

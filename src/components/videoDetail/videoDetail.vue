@@ -2,7 +2,7 @@
     <div class="playDetail">
         <x-header :left-options="{backText: ''}">嗨皮课堂</x-header>
 		<div class="videowrapper">
-			<video width="100%" controls="true" :src="videodata.videoUrl" ref='video' @play="startplay"></video>
+			<video width="100%" controls="true" :src="videodata.videoUrl" ref='video' @play="startplay" :poster="videodata.videoimg"></video>
 		</div>
 		<div class="scrollwrap"  ref='videodetail'>
 			<scroller lock-x :scrollbar-y=false :height="scrolltop" ref='scroller' use-pullup @on-pullup-loading="pullup" @on-scroll='onscroll'
@@ -25,7 +25,7 @@
 					<div class="hotcomments">							
 						<ul>
 							<li v-for="item in commentlist">
-								<div class="user">用户{{item.userid}}<span>{{item.time | ConvertTime}}</span></div>
+								<div class="user">用户{{item.actionid}}<span>{{item.time | ConvertTime}}</span></div>
 								<p class="comments-con" v-html="item.content"></p>
 							</li>
 							<li v-if="isEmptycommentlist">
@@ -215,6 +215,7 @@ export default {
                 tit:this.videodata.tit,
 				desc:this.videodata.desc,
 				videoUrl:this.videodata.videoUrl,
+				videoimg:this.videodata.videoimg,
 			}).then((res)=>{
 				if(res.data.code){
 					this.isColl=!this.isColl;
@@ -322,7 +323,8 @@ export default {
 				videoid :this.videoid,
 				authorid:this.videodata.userid,
 				videotit:this.videodata.tit,
-				videoUrl:this.videodata.videoUrl
+				videoUrl:this.videodata.videoUrl,
+				videoimg:this.videodata.videoimg,
 			}).then((res)=>{
 				if(res.data.code){
 					this.isVote=!this.isVote;
@@ -368,6 +370,7 @@ export default {
 					if(res.data.code){
 						this.commentCentent="";
 						this.getcommentlist();
+						this.isEmptycommentlist=false;
 						this.$vux.toast.text('评论成功', 'middle');
 					}else{
 						this.commentCentent="";

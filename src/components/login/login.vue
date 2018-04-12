@@ -11,7 +11,7 @@
             </p>
             <!-- <input type="button"> -->
             <p class="changepassword">
-                忘记密码?
+               
                 <i @click="onRegister">新用户注册</i>
             </p>
         </div> 

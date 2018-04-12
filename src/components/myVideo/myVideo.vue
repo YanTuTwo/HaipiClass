@@ -1,10 +1,10 @@
 <template>
     <div class="myVideo">
-        <x-header :left-options="{backText: ''}">我的作品<a slot="right" @click="clearhistory" v-if="!ishistoryListEmpty">清空</a></x-header>
+        <x-header :left-options="{backText: ''}">我的作品</x-header>
         <div>
             <section  class="collectItem" v-for="item in myVideoList" @click="goVideoDetail(item)">
                 <div class="collectItem_img">
-                   <video :src="item.videoUrl"></video>
+                   <img :src="item.videoimg"/>
                 </div>
                 <div class="collectItem_info">
                     <div class="collectItem_tit"><span>{{item.tit}}</span></div>
@@ -79,7 +79,7 @@ export default {
 		width: 4.4rem;
 		height: 3rem;
 		margin-right: 0.8rem;
-        video{
+        img{
             width: 100%;
             height: 100%;
         }
