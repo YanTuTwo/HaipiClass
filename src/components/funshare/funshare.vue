@@ -63,11 +63,11 @@ export default {
     computed:{
 
     },
-    created(){
-        this.getVideoList();
-    },
+    created(){					
+		 this.getVideoList();
+	},
     mounted(){
-        this.getVideoList();
+       
         this.initScroll();       
     },
     methods:{
@@ -91,6 +91,7 @@ export default {
                             }
                         }                       
                     } 
+                    this.initScroll();    
                     this.loading=false;
                 }
             })
@@ -138,6 +139,21 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.backtotop {
+	position: fixed;
+	bottom: 2rem;
+	right: 2rem;
+	width: 3rem;
+	height: 3rem;
+	text-align: center;
+	background: rgba(0,0,0,.4);
+	border-radius: 50%; 
+	span {
+		color: #fff;
+		font-size: 2rem;
+		line-height: 3rem; 
+	} 
+}
 .videoitem{
     width: 100%;
     position: relative;

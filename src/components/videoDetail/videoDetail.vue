@@ -6,7 +6,7 @@
 		</div>
 		<div class="scrollwrap"  ref='videodetail'>
 			<scroller lock-x :scrollbar-y=false :height="scrolltop" ref='scroller' use-pullup @on-pullup-loading="pullup" @on-scroll='onscroll'
-			:pullupConfig="{ loadingContent: '<load-more></load-more>',upContent: '加载中...',height:50,content: '上拉加载更多',downContent: '释放加载更多',}">
+			:pullupConfig="{ loadingContent: '<div></div>',upContent: '加载中...',height:50,content: '上拉加载更多',downContent: '释放加载更多',}">
 				<div class="scrollerwrapper">				
 					<div class="movieinfo">
 						<div class="author">
@@ -34,7 +34,25 @@
 						</ul>
 					</div>
 					<h3 class="aboutrecommend">精彩推荐</h3>
-					<listview :data="recommendList"  @select="selectItem"></listview>
+					<div class="recommend-list">
+						<section v-for="(item,index) in recommendList" @click="selectItem(item)">			 
+							<div class="article_img">
+								<img v-lazy="item.videoimg"/>
+								<div class="article_length">
+								<span class="article_length_value">{{item.quantity}}</span></div>
+							</div>
+							<div class="article_info">
+								<div class="article_time">{{item.uptime | ConvertTime}}</div>
+								<div class="article_title">{{item.tit}}</div>
+								<div class="article_desc">{{item.desc}}</div>
+								<div class="article_bottom">
+									<p>{{item.coll | ConvertPeople}}人收藏 ，{{item.vote | ConvertPeople}}人点赞</p>
+									<!-- <span class="share"></span>、 -->
+								</div>
+							</div>
+							
+						</section>
+					</div>
 				</div>		
 			</scroller> 
 		</div>
@@ -42,7 +60,7 @@
 		<div class="backtotop" @click="backtotop" v-show="showbtn">
 			<span class="iconfont icon-jiantoushang"></span>
 		</div>
-		<div class="comment" ref="comment">
+		<div class="comment" ref="comment" v-if="loginstatus">
 			<input type="text" v-model="commentCentent" placeholder="评论点什么吧！"><span @click="sendcomment">发送</span>			
 		</div>
 		<loading :show="loading" text="loading" ></loading>      
@@ -103,7 +121,13 @@ export default {
 		//初始化滚动
 		initScroll(){
 			let scrolltop = this.$refs.videodetail.offsetTop;
-			let commentwrap= this.$refs.comment.offsetHeight;
+			let commentwrap
+			if(this.loginstatus){
+				commentwrap= this.$refs.comment.offsetHeight;
+			}else{
+				commentwrap= 0;
+			}
+			
 			this.scrolltop = (document.documentElement.clientHeight - scrolltop-commentwrap) + 'px';
 			console.log(scrolltop)
         },
@@ -131,6 +155,7 @@ export default {
 			this.loading=true;
 			this.videoid=this.$route.query.videoid;
 			this._getvideodata();	
+			this._getrecommendList();
 			this.getcommentlist();
 		},
 		//获取当前id的视频信息
@@ -145,29 +170,24 @@ export default {
 				this.loading=false;
 			})
         },
-		_getmorerecList(){
-			axios.get('/api/playDetail/getMoreList?plid='+this.plid+'&start='+this.recommenstart+'&len='+this.recommenlen).then((res)=>{
+		_getrecommendList(){
+			axios.get('/api/upload/videoList?pending=1',{}).then((res)=>{
 				console.log(res.data);
-				if(res.data==""){
-					this.$vux.toast.text('没有更多数据了~·', 'bottom');
-					this.$refs.scroller.reset();
-					this.$refs.scroller.disablePullup();
-					this.loading=false;
-					return false;
+				if(res.data.code){
+					// this.userlist=res.data.userinfo;
+            		this.recommendList=res.data.videolist;
 				}
-				this.recommendList=	this.recommendList.concat(res.data);		
-				this.loading=false;
-				this.$refs.scroller.reset();
-				this.$refs.scroller.donePullup();
+				
 			})
 		},
         getcommentlist(){
+			this.isEmptycommentlist=false;
 			axios.get('/api/users/getcommentlist?videoid='+this.videoid,{}).then((res)=>{
 				   console.log(res.data);
 				   if(res.data.code){
 					   if(res.data.data.Comment.length==0){
 						   this.isEmptycommentlist=true;
-						   return ;
+						//    return ;
 					   }
 					   this.commentlist=res.data.data.Comment;
 					}
@@ -239,8 +259,8 @@ export default {
 		backtotop(){
 			this.$refs.scroller.reset({top:0});
 		},
-		selectItem(){
-
+		selectItem(item){
+			this.$router.push({ path: '/videoDetail', query: {videoid:item.videoid}});
 		},
 		// goIndexPage(){
 		// 	this.$router.push({ path: '/index/recommend'});
@@ -343,6 +363,9 @@ export default {
 		},
 		//获取当前用户的信息做收藏点赞的更新
 		getUserInfo(){
+			if(!this.loginstatus){
+				return ;
+			}
 			axios.get("/api/users/getuserinfo",{
 				params:{
 					userid:window.localStorage.getItem("userid"),
@@ -357,6 +380,17 @@ export default {
 		},
 		//评论
 		sendcomment(){
+			// if(this.loginstatus){
+			// 	//发收藏请求
+			// 	if(this.isColl){
+			// 		this.deleteCollect();
+			// 	}else{
+			// 		this.addCollect();
+			// 	}				
+			// }else{
+			// 	this.$vux.toast.text('登录后才能收藏喔！', 'middle');
+			// }
+			this.loading=true;
 			if(this.commentCentent!=""){
 				axios.post("/api/users/addcomment",{
 					content:this.commentCentent,
@@ -364,7 +398,8 @@ export default {
 					actionid:window.localStorage.getItem('userid'),
 					userid:this.videodata.userid,
 					videotit:this.videodata.tit,
-					videoUrl:this.videodata.videoUrl
+					videoUrl:this.videodata.videoUrl,
+					videoimg:this.videodata.videoimg,
 				}).then((res)=>{
 					console.log(res.data);
 					if(res.data.code){
@@ -372,9 +407,11 @@ export default {
 						this.getcommentlist();
 						this.isEmptycommentlist=false;
 						this.$vux.toast.text('评论成功', 'middle');
+						this.loading=false;
 					}else{
 						this.commentCentent="";
 						this.$vux.toast.text('评论失败', 'middle');
+						this.loading=false;
 					}
 					
 				})
@@ -642,6 +679,74 @@ export default {
 			}
 		}
 	}
-	
+.article_info {
+  padding: .8rem;
+}
+.article_img {
+  height: 12.7rem;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  img {
+    display: block;
+    width: 100%;
+    height: inherit;
+    display: block;
+	// padding: 2rem;
+  }
+}
+.recommond-list {
+  section {
+    margin: .8rem;
+    box-shadow: 0 0 5px 2px rgba(0,0,0,.2);
+  }
+}
+.article_length {
+  position: absolute;
+  right: 0;
+  bottom: 2rem;
+  width: 5rem;
+  height: 1.2rem;
+  padding: 0 0.5rem;
+  background: linear-gradient(262deg,rgba(0,0,0,0.53) 0,rgba(0,0,0,0) 80%);
+}
+.article_length_value {
+  display: block;
+  float: right;
+  color: white;
+  font-size: 0.8rem;
+  line-height: 1.2rem;
+}
+.article_time {
+  padding-top: .6rem;
+  color: #bababa;
+  font-size: 0.6rem;
+}
+.article_title {
+  padding: .5rem 0;
+  font-size: 1.2rem;
+}
+.article_desc {
+  // height: 3rem;
+  line-height: 1rem;
+  width: 21.133rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  font-size: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+.article_bottom {
+  position: relative;
+  border-top: 0.06rem solid #bababa;
+  padding: 0.6rem 0;
+  p {
+    color: #bababa;
+    font-size: 0.6rem;
+    line-height: 1rem;
+  }
+}
+
 </style>
 

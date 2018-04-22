@@ -67,7 +67,7 @@ export default {
                                               
             } 
             
-            console.log(this.file);
+            // console.log(this.file);
         },
         saveData(location){
             var self=this;

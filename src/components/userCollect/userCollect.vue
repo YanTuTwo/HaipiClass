@@ -95,6 +95,7 @@ export default {
         },
         onChangeTab () {
             console.log(this.Tabindex);
+            this.isEmptylist=false;
             this.getCollectList();
         },
         onscroll(){
